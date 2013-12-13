@@ -1,0 +1,87 @@
+<div id="attendeePage" class="page">
+	<header class="bar-title">
+		<a ng-if="a.selection==='Connections'" class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 25px;">
+			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
+			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
+		</a>	
+		<!-- 
+		<a ng-hide="a.selection==='AttendeeDetails'" class="button" ng-click="back()"  stop-event="click" style="margin-left:0px;margin-top: 2px;">
+			<i class="icon-arrow-left icon-large"></i>
+		</a> -->
+		<h1 class="title" ng-swipe-right="back()" style="width:92%"> 
+
+		<i ng-show="a.loading || a.attendees.loading || a.attendeeDetails.loading " class="icon-spinner icon-spin icon-large" style="display: none;"></i> 	
+		<img src="" class="headerlogo"/> {{a.pageTitle}}</h1>
+		
+	<a ng-if="a.selection==='AttendeeDetails'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='Connections';" stop-event="click">
+			<i class="icon-remove icon-large"></i>
+		</a>
+	</header>
+	
+	<div class="content  slide" ng-switch on="a.selection">
+			
+			<div class="tab" ng-switch-when="Connections" infinite-scroll="getMoreAttendees()" infinite-scroll-distance="10">
+				<ul class="list inset">
+					<!-- <li> Find:<input tyzpe = "text" style="margin-bottom:0px;height:35px"  placeholder="Name"  ng-model="searchText"></li>	
+					 --><li ng-repeat="r in a.attendees.data " style="padding-bottom:10px">
+						<a stop-event="click"  ng-click="a.attendees.current = r; a.selection='AttendeeDetails';" ng-swipe-right="a.attendees.current = r; a.selection='AttendeeDetails';">
+						
+					 	<div>
+							<img src="adminuser.png" style="position: absolute;top: 10%; height:70px;width:70px">
+						</div>
+						<div style="padding-left:100px"> 
+							<strong><h2>{{r.firstName}} {{r.lastName}}</h2></strong>
+							<div style="margin-left:15px">
+								{{r.title}}, {{r.about}}.
+
+							</div>
+						</div> 	
+						<div style="margin-left:5px">
+								<i class="icon-twitter-sign"></i>
+								<i class="icon-linkedin-sign"></i>	
+								<i class="icon-envelope"></i>
+						</div>
+						<!-- <span style="color:gray;font-size:30px;position: absolute;top: 30%;right:10px"><i class="icon-ok-sign"></i></span> -->
+						<span class="chevron"></span>
+					</a>
+					</li>
+					<li ng-show="a.attendees.loading" style="text-align: center; display: none;"><i class="icon-spinner icon-spin icon-large"></i></li>
+				</ul>
+				<!--a ng-show="a.attendees.hasMore" class="button-main button-block" ng-click="getMoreattendees()">More</a-->
+			</div>	
+
+
+				<div class="tab" ng-switch-when="AttendeeDetails">
+				<div style="padding-left:40%;margin-top:10px;border-radius:10px">
+					<img src="adminuser.png" style="border:1px;" height="80px" width="90px"></img>
+				</div>	
+				<div style="padding-left:30%;border-radius:10px">
+				  <h3>{{a.attendees.current.firstName}} {{a.attendees.current.lastName}}
+				  ,{{a.attendees.current.title}}</h3>
+				</div>
+				<div style="padding-left:15%;margin-bottom:5px;border-radius:10px">
+				  {{a.attendees.current.about}}
+				
+				</div>	
+				   <div style="margin-left:15px;margin-bottom:5px"><strong>CONTACT</strong></div>		
+				  <ul class="list inset">
+				  <li><span style="font-size:20px"><i class="icon-twitter"></i>    </span>FOLLOW</li>
+				  <li><span style="font-size:20px"><i class="icon-linkedin"></i>    </span>CONNECT</li>
+
+				  <li><span style="font-size:20px"><i class="icon-envelope"></i>    </span>EMAIL</li>
+
+				  <li><span style="font-size:20px"><i class="icon-download"></i>    </span>SAVE</li>
+				  </ul>
+ 		
+ 				<div style="margin-left:15px;margin-bottom:5px"><strong>LINKS</strong></div>		
+ 				 
+				  <ul class="list inset">
+				  <li><span style="font-size:20px"><i class="icon-twitter"></i>    </span> {{a.attendees.current.twittername}}</li>
+				  <li><span style="font-size:20px"><i class="icon-linkedin"></i>    </span>{{a.attendees.current.linkedinName}}</li>
+				  </ul>
+				 
+				</div>
+				</div>
+		</div>
+	</div>
+</div>

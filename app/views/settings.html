@@ -1,0 +1,47 @@
+<div class="page" ng-class="Menu.isOpen()?'open':''">
+	<header class="bar-title">
+		<a class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 25px;">
+			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
+			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
+		</a>
+		<h1 class="title">Settings</h1>
+	</header>
+	<nav class="bar-tab">
+		<ul class="tab-inner">
+			<li class="tab-item" ng-click="s.selection='Demo'" ng-class="s.selection==='Demo'?'active':''">
+				<a>
+					<i class="icon-play-circle icon-large"></i>
+					<div class="tab-label">Demo</div>
+				</a>
+			</li>			
+			<li class="tab-item" ng-class="s.selection==='Basic'?'active':''" ng-click="s.selection='Basic'">
+				<a>
+					<i class="icon-cloud icon-large"></i>
+					<div class="tab-label">Basic</div>
+				</a>
+			</li>
+			<li class="tab-item" ng-click="s.selection='Advanced'" ng-class="s.selection==='Advanced'?'active':''">
+				<a>
+					<i class="icon-cog icon-large"></i>
+					<div class="tab-label">Advanced</div>
+				</a>
+			</li>
+		</ul>
+	</nav>
+	<div class="content slide" ng-switch on="s.selection">
+			<space></space>
+			<ul ng-switch-when="Basic" class="list inset">
+				<li>Use Right Thumb<div class="toggle" ng-class="s.rightThumb?'active':''" ng-click="s.rightThumb=!s.rightThumb;" ng-swipe-right="s.rightThumb=true;" ng-swipe-left="s.rightThumb=false;"><div class="toggle-handle"></div></div></li>
+				<li>Keep Signed In<div class="toggle" ng-class="s.keepSignedIn?'active':''" ng-click="s.keepSignedIn=!s.keepSignedIn;" ng-swipe-right="s.keepSignedIn=true" ng-swipe-left="s.keepSignedIn=false"><div class="toggle-handle"></div></div></li>
+			</ul>
+			<ul ng-switch-when="Advanced" class="list inset">
+				<li>Enable Offline Mode<div class="toggle" ng-class="s.offlineMode?'active':''" ng-click="s.offlineMode=!s.offlineMode;" ng-swipe-right="s.offlineMode=true;" ng-swipe-left="s.offlineMode=false;"><div class="toggle-handle"></div></div></li>
+			</ul>
+			<ul ng-switch-when="Demo" class="list inset">
+				<li>Enable Demo<div class="toggle" ng-class="Demo.isEnabled()?'active':''" ng-click="Demo.setEnabled(!Demo.isEnabled());" ng-swipe-right="Demo.setEnabled(true);" ng-swipe-left="Demo.setEnabled(false);"><div class="toggle-handle"></div></div></li>
+				<li ng-if="Demo.isEnabled()">Auto Run Demo<div class="toggle" ng-class="Demo.isAuto()?'active':''" ng-click="Demo.setAuto(!Demo.isAuto());" ng-swipe-right="Demo.setAuto(true);" ng-swipe-left="Demo.setAuto(false);"><div class="toggle-handle"></div></div></li>
+				<li ng-if="Demo.isEnabled() && Demo.isAuto()">Pause Demo<div class="toggle" ng-class="Demo.isPaused()?'active':''" ng-click="Demo.setPaused(!Demo.isPaused());" ng-swipe-right="Demo.setPaused(true);" ng-swipe-left="Demo.setPaused(false);"><div class="toggle-handle"></div></div></li>
+				<li ng-if="Demo.isEnabled()">Run Demo<a ng-click="Demo.startDemo()" class="button button-main"><i class="icon-play"></i> Start Demo</a></li>
+			</ul>
+	</div>
+</div>

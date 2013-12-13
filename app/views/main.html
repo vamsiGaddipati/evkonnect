@@ -1,0 +1,31 @@
+<div class="page" ng-class="Menu.isOpen()?'open':''">
+	<header class="bar-title">
+		<a class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 12px;">
+			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
+			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
+		</a>	
+		<h1 class="title">News & Updates</h1>
+		<a class="button" ng-click="signOff()">
+			<i class="icon-signout icon-large"></i> {{userName}}
+		</a>
+	</header>
+	<div class="content  slide" ng-click="Menu.isOpen() && Menu.toggle()">
+		<space></space>
+		<ul class="list inset">
+				<li  style="border-bottom:30px solid #41b7d8;padding-top:5px;padding-bottom:10px">
+						<div style=""> <h3>Announcement</h3></div>
+						<div style="border-bottom:1px solid #CCC"></div>
+					 <div style="padding-top:10px">
+						<strong>Welcome to New Event Organiser</strong> 
+					 </div>
+					<div>
+						It has been updated to bring you some cool new features! Open the side menu and click on the MY Events to explore!
+					 </div>
+					<span class="chevron"></span>	
+					</li>
+					
+				</ul>
+	
+			
+	</div>
+</div>

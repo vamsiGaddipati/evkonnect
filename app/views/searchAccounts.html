@@ -1,0 +1,44 @@
+<div id="searchAccounts" class="page" ng-class="Menu.isOpen()?'open':''">
+<header class="bar-title">
+	<a class="button" ng-click="Menu.toggle()" stop-event="click" style="height:23px;padding-right: 25px;">
+		<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
+		<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
+	</a>	
+	<h1 class="title">Search Accounts</h1>
+	<a class="button" ng-click="Menu.TBD()" stop-event="click">
+		<i class="icon-plus icon-large"></i>
+	</a>
+</header>
+<div class="content slide" ng-click="Menu.isOpen() && Menu.toggle()" infinite-scroll="scroll()" infinite-scroll-distance="50">
+	<space></space>	
+	<div class="input-group inset">
+		<div class="input-row">
+			<label>Name</label>
+			<input type="text" placeholder="e.g. Vision" ng-model="s.data.partyname">
+		</div>
+		<div class="input-row">
+			<label>Address</label>
+			<input type="text" placeholder="e.g. 6555 Lucky Street" ng-model="s.data.address1">
+		</div>
+		<div class="input-row">
+			<label>Phone</label>
+			<input type="tel" ng-model="s.data.phonenumber">
+		</div>
+		<div class="input-row">
+			<label>Email</label>
+			<input type="email" ng-model="s.data.emailaddress">
+		</div>
+	</div>
+	<a id="searchBtn" class="button button-main" stop-event="click" ng-click="offset=0; doSearch();"><i class="icon-search"></i> Search</a>
+	<a id="clearBtn" class="button inset" stop-event="click" ng-click="doClear();"><i class="icon-search"></i> Clear</a>	
+	<ul class="list inset" ng-if="s.result.length>0">
+		<li ng-repeat="r in s.result">
+			<a ng-click="goToDetails(r)" ng-swipe-right="goToDetails(r)" stop-event="click">
+				<strong>{{r.partyName}}</strong><br>{{r.address1}}<any ng-show="r.city">, </any> {{r.city}}
+				<span class="chevron"></span>
+				<span ng-show="r.identifyingAddressFlag==='Y'"class="count">Primary</span>
+			</a>
+		</li>
+	</ul>
+</div>
+</div>

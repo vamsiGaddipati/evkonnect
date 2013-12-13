@@ -1,0 +1,17 @@
+<div class="page" ng-class="Menu.isOpen()?'open':''">
+	<header class="bar-title">
+		<a class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 12px;">
+			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
+			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
+		</a>	
+		<h1 class="title">Lobby</h1>
+		<a class="button" ng-click="signOff()">
+			<i class="icon-signout icon-large"></i> {{userName}}
+		</a>
+	</header>
+	<div class="content  slide" ng-click="Menu.isOpen() && Menu.toggle()">
+		<space></space>
+		<space></space>
+		lobby
+		</div>
+</div>

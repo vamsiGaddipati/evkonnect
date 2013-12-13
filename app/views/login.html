@@ -1,0 +1,26 @@
+<div class="page">
+<header class="bar-title">
+	<h1 class="title">
+		<img src="logo.png" height="35" width="80">
+		Event Conference</h1>
+</header>
+<div class="content">   
+	<space></space>	
+	<div class="input-group inset">
+		<div class="input-row">
+			<label>Username</label>
+			<input type="text" placeholder="username@domain.com" ng-model="username">
+		</div>
+		<div class="input-row">
+			<label>Password</label>
+			<input type="password" ng-model="password">
+		</div>
+	</div>
+	<a class="button-main button-block" ng-click="signIn()">Sign In</a>
+
+	<a class="button-main button-block button-negative" ng-click="signIn()">
+		<i class="icon-google-plus-sign"></i> Log in with Google</a>
+	<a class="button-main button-block button-linkedin" ng-click="signIn()"><i class="icon-linkedin-sign"></i> Log in with Linkedin</a>
+	<a class="button-main button-block button-twitter" ng-click="signIn()"><i class="icon-twitter-sign"></i> Log in with Twitter</a>
+</div>
+</div>

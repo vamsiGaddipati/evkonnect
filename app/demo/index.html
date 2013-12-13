@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html class="ui-mobile-rendering">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="joyride-2.1.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="m2.css" type="text/css" media="screen" charset="utf-8">
+	<script src="../lib/jquery-2.0.2.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../lib/angular.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="m2.js" type="text/javascript" charset="utf-8"></script>	
+</head>
+<body class="demobody" ng-app="app" ng-controller="M2Ctrl">
+	<div class="toggle layout" ng-class="d.toggle?'active':''" ng-click="d.toggle=!d.toggle"><div class="toggle-handle"></div></div>
+	<div class="toggle demo" ng-class="d.demo?'active':''" ng-click="d.demo=!d.demo"><div class="toggle-handle"></div></div>
+	<div ng-show="d.demo" class="toggle autoDemo" ng-class="d.autoDemo?'active':''" ng-click="d.autoDemo=!d.autoDemo"><div class="toggle-handle"></div></div>
+	<div ng-show="d.demo" class="toggle startDemo" ng-class="d.startDemo?'active':''" ng-click="d.startDemo=!d.startDemo"><div class="toggle-handle"></div></div>
+	<div class="clearfix"></div>
+	<div class="iphone" ng-class="d.toggle?'landscape':'potrait'">
+		<div class="inner"><iframe src="../main.html"></iframe></div>
+	</div>
+	<div class="ipad" ng-class="d.toggle?'landscape':'potrait'">
+		<div class="inner"><iframe src="../main.html"></iframe></div>
+	</div>
+	
+    <!-- Tip Content -->
+  <ol id="joyRideTipContent">
+    <li data-class="layout" data-text="Next" data-options="tipLocation:right;">
+      <h2>Orientation Switch</h2>
+      <p>You can toggle between Landscape &amp; Portrait</p>
+    </li>
+    <li data-class="demo" data-button="Next" data-options="tipLocation:bottom;">
+      <h2>Demo vs. Manual</h2>
+      <p>Demo mode can be turned off if you prefer to explore this app yourself</p>
+    </li>
+    <li data-class="autoDemo" data-button="Next">
+      <h2>Guided vs. Auto</h2>
+      <p>Turn on this switch to site back and watch we have to show for this demo.</p>
+    </li>
+    <li data-class="iphone" data-button="Next" data-options="tipLocation:right">
+      <h2>iPhone</h2>
+      <p>See how this app works on an iPhone</p>
+    </li>
+    <li data-class="ipad" data-button="Next" data-options="tipLocation:left">
+      <h2>iPad</h2>
+      <p>See how the app works on an iPad</p>
+    </li>
+    <li data-class="startDemo" data-button="Close" data-options="tipLocation:bottom;">
+      <h2>Start</h2>
+      <p>Ok. Let's get started. Turn on this switch to start the demo. <br><br>Note: You do not have to enter username/password for this demo.</p>
+    </li>
+  </ol>
+
+  <!-- Run the plugin -->
+<script src="modernizr.mq.js" type="text/javascript" charset="utf-8"></script>
+<script src="jquery.joyride-2.1.js" type="text/javascript" charset="utf-8"></script>
+
+  <script>
+    $(window).load(function() {
+      $('#joyRideTipContent').joyride({
+        autoStart : true,
+		localStorage: true,
+        postStepCallback : function (index, tip) {
+
+      },
+      modal:true,
+      expose: true
+      });
+    });
+  </script>	
+</body>
+</html>

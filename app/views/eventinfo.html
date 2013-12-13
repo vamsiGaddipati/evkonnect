@@ -1,0 +1,31 @@
+<div class="page" ng-class="Menu.isOpen()?'open':''">
+	<header class="bar-title">
+		<a class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 12px;">
+			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
+			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
+		</a>	
+		<h1 class="title">Event Info</h1>
+		<a class="button" ng-click="signOff()">
+			<i class="icon-signout icon-large"></i> {{userName}}
+		</a>
+	</header>
+	<div class="content  slide" ng-click="Menu.isOpen() && Menu.toggle()">
+					<ul class="list inset">
+				<li ng-click="joinEvent()" style="">
+						<span style="font-size=15px"> <i class="icon-calendar"></i></span>
+						<strong> {{a.events.startDate | date:'MMM-dd-yyyy'}}</strong>
+					 </li><li>
+					 	 <i class="icon-map-marker"></i> <strong>{{a.events.venue}}</strong>
+					 	
+					</li>
+				</ul>
+				<ul class="list inset">
+					<li>
+						{{a.events.eventInfo}}
+					</li>
+					
+				</ul>
+	
+	
+	</div>
+</div>
