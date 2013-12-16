@@ -1,5 +1,6 @@
 'use strict';
 var baseUrl = 'http://tevents.rapapp.com/api/', isDebugEnabled = true;
+var homeBaseUrl = 'http://tevents.rapapp.com/';
 //baseUrl = 'http://localhost:8888/api/';
 /*(function (w) {
 	var d = w.document,
@@ -112,8 +113,12 @@ console.log(angular.toJson(next));
 app.config(function ($routeProvider) {
 	$routeProvider
 	.when('/', {
-		templateUrl: 'views/main.html',
+		templateUrl: 'views/neewsfeed.html',
 		controller: 'MainCtrl'
+	})
+	.when('/sponsers', {
+		templateUrl: 'views/sponsers.html',
+		controller: 'SponserCtrl'
 	})
 	.when('/login', {
 		templateUrl: 'views/login.html',
@@ -121,7 +126,7 @@ app.config(function ($routeProvider) {
 	})
 	.when('/connections', {
 		templateUrl: 'views/connections.html',
-		controller: 'PeopleCtrl'
+		controller: 'ConnectionCtrl'
 		
 	})
 	.when('/profile', {
@@ -137,12 +142,13 @@ app.config(function ($routeProvider) {
 		controller: 'EventInfoCtrl'
 		
 	})
-	.when('/lobby', {
-		templateUrl: 'views/lobby.html'
-		
+	.when('/sponsers', {
+		templateUrl: 'views/sponsers.html',
+		controller:'SponsersCtrl'  
 	})
 	.when('/people', {
-		templateUrl: 'views/people.html'
+		templateUrl: 'views/people.html',
+		controller:'PeopleCtrl'  
 	})
 	.when('/schedule', {
 		templateUrl: 'views/schedule.html',
@@ -216,11 +222,31 @@ app.service('Logger', function() {
 		$this.confirmCallback();
 	};
 });
-app.service('Session', ['RaModel', '$location', 'Logger', function (RaModel, $location, Logger) {
+app.service('Session', ['RaModel', '$location','$rootScope', 'Logger', function (RaModel, $location, $rootScope,Logger) {
 	var session = null, $this = this;
 	this.get = function () {
 		return session;
 	};
+
+	this.set = function(key,value) {
+		//alert(session);
+		if(session === "undefined" || session === null) {
+			session ={};
+			//alert("!");
+		}
+		//alert(key+"---"+value);
+	    session[key] =value;
+	    //alert(session['sessionId']);
+	};
+	this.store = function() {
+		
+		var _session = angular.fromJson(localStorage.getItem('session'));
+		if (_session ) {
+		}else {
+			localStorage.setItem('session', angular.toJson(session));
+		}
+	}
+
 	this.validate = function(callback) {
 		session = angular.fromJson(localStorage.getItem('session'));
 		if (session) {
@@ -264,13 +290,20 @@ app.service('Session', ['RaModel', '$location', 'Logger', function (RaModel, $lo
 			} else {
 				$location.path('/');
 				session = result;
-				localStorage.setItem('session', angular.toJson(session));
+				
 				callback();
 			}
 		});
 	};
 	this.signOff = function () {
 		Logger.showConfirm('Do you want to Sign Off?', function(){
+			if($rootScope.userprofile) {
+				IN.User.logout();
+				delete $rootScope.userprofile;
+				$rootScope.loggedUser = false;
+				$this.showLogin();
+			 
+			} else {
 			RaModel.save({'dataSource':'signoff'}, {'sessionId': session.sessionId},
 			function(result) {
 				Logger.log(angular.toJson(result));
@@ -279,6 +312,8 @@ app.service('Session', ['RaModel', '$location', 'Logger', function (RaModel, $lo
 				}
 				$this.showLogin();
 			});
+			}
+			
 		});
 	};
 }]);
@@ -390,7 +425,7 @@ app.service('Menu', ['$location', function ($location) {
 	};
 
 	var isOpen = false, subPage = false, active,
-	items = [{code:'/', icon:'icon-rss', name:'News Feeds'},{code:'/connections', icon:'icon-user', name:'Connections'},{code:'/profile', icon:'icon-edit', name:'Edit Profile'},{code:'/myevents', icon:'icon-bullseye', name:'My Events'},{code:'map', icon:'icon-map-marker', name:'Ties Event',isEvent:'Y'},{code:'/people', icon:'icon-group', name:'People'},{code:'/schedule', icon:'icon-calendar', name:'Schedule'},{code:'/eventinfo', icon:'icon-info-sign', name:'Event Info'}];
+	items = [{code:'/', icon:'icon-rss', name:'News Feeds'},{code:'/connections', icon:'icon-user', name:'Connections'},{code:'/profile', icon:'icon-edit', name:'Edit Profile'},{code:'/myevents', icon:'icon-bullseye', name:'My Events'},{code:'map', icon:'icon-map-marker', name:'TES Summit 2013',isEvent:'Y'},{code:'/people', icon:'icon-group', name:'People'},{code:'/schedule', icon:'icon-calendar', name:'Schedule'},{code:'/eventinfo', icon:'icon-info-sign', name:'Event Info'},{code:'/sponsers', icon:'icon-anchor', name:'Sponsors'}];
 
 	this.getItem = function(code){
 		var len = items.length;
@@ -402,6 +437,27 @@ app.service('Menu', ['$location', function ($location) {
 		return items[0];
 	};
 }]);
+
+app.factory('QCalls', ['$http','$q',function($http,$q) {
+	var $this = this;
+	//var datas = null;
+	return {
+
+		 waitForAllQCalls: function(aurl,callback) { 
+		 	//alert(aurl);
+		var httpcall =  $http({ url: aurl, method: "GET"}).
+						success(function(data, status, headers, config) {
+							callback(data,"Success");
+				    	}).
+				  		error(function(data, status, headers, config) {
+				  			callback(data,"Error");
+				   		});
+          return $q.all([httpcall]);
+      }
+	}
+	
+}]);
+
 app.service('Cache', function () {
 	var map;
 	this.init = function(){

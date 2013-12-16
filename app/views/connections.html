@@ -30,8 +30,8 @@
 							<img src="adminuser.png" style="position: absolute;top: 10%; height:70px;width:70px">
 						</div>
 						<div style="padding-left:100px"> 
-							<strong><h2>{{r.firstName}} {{r.lastName}}</h2></strong>
-							<div style="margin-left:15px">
+							<strong><h3>{{r.firstName}} {{r.lastName}}</h3></strong>
+							<div style="margin-left:0px">
 								{{r.title}}, {{r.about}}.
 
 							</div>
@@ -56,8 +56,7 @@
 					<img src="adminuser.png" style="border:1px;" height="80px" width="90px"></img>
 				</div>	
 				<div style="padding-left:30%;border-radius:10px">
-				  <h3>{{a.attendees.current.firstName}} {{a.attendees.current.lastName}}
-				  ,{{a.attendees.current.title}}</h3>
+				  <h3>{{a.attendees.current.firstName}} {{a.attendees.current.lastName}}, {{a.attendees.current.title}}</h3>
 				</div>
 				<div style="padding-left:15%;margin-bottom:5px;border-radius:10px">
 				  {{a.attendees.current.about}}

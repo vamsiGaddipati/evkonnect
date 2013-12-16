@@ -1,0 +1,59 @@
+<div id="sponserPage" class="page">
+	<header class="bar-title">
+		<a ng-if="a.selection==='Sponsers'" class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 25px;">
+			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
+			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
+		</a>	
+		<!-- 
+		<a ng-hide="a.selection==='sponserDetails'" class="button" ng-click="back()"  stop-event="click" style="margin-left:0px;margin-top: 2px;">
+			<i class="icon-arrow-left icon-large"></i>
+		</a> -->
+		<h1 class="title" ng-swipe-right="back()" style="width:92%"> 
+
+		<i ng-show="a.loading || a.sponsers.loading || a.sponserDetails.loading " class="icon-spinner icon-spin icon-large" style="display: none;"></i> 	
+		<img src="" class="headerlogo"/> {{a.pageTitle}}</h1>
+		
+	<a ng-if="a.selection==='SponserDetails'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='Sponsers';" stop-event="click">
+			<i class="icon-remove icon-large"></i>
+		</a>
+	</header>
+	
+	<div class="content  slide" ng-switch on="a.selection">
+			
+			<div class="tab" ng-switch-when="Sponsers" infinite-scroll="getMoreSponsers()" infinite-scroll-distance="15">
+				<ul class="list inset">
+					<!-- <li> Find:<input tyzpe = "text" style="margin-bottom:0px;height:35px"  placeholder="Name"  ng-model="searchText"></li>	
+					 --><li ng-repeat="r in a.sponsers.data " style="padding-bottom:35px">
+						<a stop-event="click"  ng-click="a.sponsers.current = r; a.selection='SponserDetails';" ng-swipe-right="a.sponsers.current = r; a.selection='SponserDetails';">
+						
+					 	<div>
+							<img src="{{r.urlText}}" style="position: absolute;top: 10%; height:90px;width:90px">
+						</div>
+						<div style="padding-left:100px"> 
+							<strong><h3>{{r.holderName}}</h3></strong>
+							{{r.holderAbout2.substring(0,100)}}..
+						</div> 
+						<!-- <span style="color:gray;font-size:30px;position: absolute;top: 30%;right:10px"><i class="icon-ok-sign"></i></span> -->
+						<span class="chevron"></span>
+					</a>
+					</li>
+					<li ng-show="a.sponsers.loading" style="text-align: center; display: none;"><i class="icon-spinner icon-spin icon-large"></i></li>
+				</ul>
+				<!--a ng-show="a.sponsers.hasMore" class="button-main button-block" ng-click="getMoresponsers()">More</a-->
+			</div>	
+
+
+				<div class="tab" ng-switch-when="SponserDetails">
+				
+				<ul class="list inset" >
+				<li style="padding: 20px 10px 20px 10px;">
+				<div style="">
+				<h3>{{a.sponsers.current.holderName}}</h3>
+				  {{a.sponsers.current.holderAbout2}}
+				
+				</div>
+				</li>	
+			</ul>
+		</div>
+	</div>
+</div>

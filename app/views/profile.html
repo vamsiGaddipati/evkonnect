@@ -9,11 +9,12 @@
 			<i class="icon-signout icon-large"></i> {{userName}}
 		</a>
 	</header>
-	
+	<!-- [ "id", "firstName", "lastName","emailAddress", "pictureUrl",
+              "publicProfileUrl" ]) -->
 
   <div class="content  slide" ng-click="Menu.isOpen() && Menu.toggle()">
 	
-  <div style="padding-left:40%;margin-top:10px;border-radius:10px"><img src="adminuser.png" style="border:1px;" height="80px" width="80px"></img></div>	
+  <div style="padding-left:40%;margin-top:10px;border-radius:10px"><img src="{{a.profile.pictureUrl}}" style="border:1px;" height="80px" width="80px"></img></div>	
   <div style="margin-left:15px;margin-bottom:5px"><strong>CONTACT</strong></div>		
  <ul class="list inset">
   <li>{{a.profile.firstName}}</li>

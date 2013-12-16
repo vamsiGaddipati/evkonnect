@@ -16,7 +16,7 @@
 	<link rel="stylesheet" href="styles/main.css">
 	<!-- endbuild -->
 </head>
-<body ng-app="SPAApp" ng-controller="IndexCtrl">
+<body ng-app="SPAApp" ng-controller="IndexCtrl" id="appBody">
 	<div ng-view class="container view-animate-container"></div>
 	<div id="menu" style="display: none;">
 		<div class="lpanel">
@@ -64,5 +64,13 @@
 	<script src="scripts/controllers/chart.js" type="text/javascript" charset="utf-8"></script>
 	<!-- endbuild -->
 	<script src="lib/fc/FusionCharts.js" type="text/javascript" charset="utf-8"></script>
+		<script src="scripts/controllers/linkedin.js"></script>
+	<script type="text/javascript" src="http://platform.linkedin.com/in.js">
+	//here goes the api key, and the callback function
+	api_key:75qa08oco86hbq
+	onLoad: onLinkedInLoad
+	authorize: true
+	</script>
+
 </body>
 </html>

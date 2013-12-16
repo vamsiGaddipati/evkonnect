@@ -3,10 +3,10 @@
 <!-- config.xml reference: https://build.phonegap.com/docs/config-xml -->
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
-        id        = "com.telidos.mobile"
+        id        = "evkonnect"
         version   = "1.0.0">
 
-    <name>Telidos Mobile</name>
+    <name>EVKonnect</name>
 
     <description>
         Telidos mobile application

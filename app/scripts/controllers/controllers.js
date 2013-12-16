@@ -1,112 +1,98 @@
 'use strict';
 var app = angular.module('SPAApp');
-app.controller('SearchAccountsCtrl', ['$scope', '$location', 'RaModel', 'Session', 'Cache', 'Menu', 'Logger', function ($scope, $location, RaModel, Session, Cache, Menu, Logger) {
-	Menu.setActiveCode('searchAccounts');
-	Logger.log('SearchAccountsCtrl');
-	$scope.Menu = Menu;
-	var s;
-	function init() {
-		$scope.s = Cache.get('SearchAccountsData') || {'data':{}};
-		s = $scope.s;
-		s.loading = false;
-	}
-	init();
-	var query = function(callback){
-		if (s.data) {
-			s.loading = true;
-			RaModel.query({'dataSource':'CustWBCustomerSearch'}, {'limit':20,'offset':s.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'data' : s.data, 'orderBy': '#accountNumber# ASC, #identifyingAddressFlag# DESC'}, function(result){
-				if (result.$error) {
-					Logger.showAlert(result.errorMessage, result.errorTitle);
-				} else {
-					if (result.data.length > 0) {
-						s.elapsed = result.elapsed;
-						s.result.push.apply(s.result, result.data);
-						Cache.put('SearchAccountsResults', s.result);
-						if (result.data.length < 20) {
-							s.hasMore = false;
-						} else {
-							s.hasMore = true;
-						}
-						Cache.put('SearchAccountsHasMore', s.hasMore);
-					} else {
-						s.hasMore = false;
-						if (s.result.length === 0) {
-							Logger.showAlert('No acounts found');
-						}
-					}
-				}
-				s.loading = false;
-				s.scrolling = false;
-				if (callback) {
-					callback(result);
-				}
-			});
-		} else {
-			Logger.showAlert('You must', 'Blind Query');
-			s.scrolling = false;
-		}
-	};
-	$scope.doSearch = function(callback) {
-		if (s.loading === true) {
-			return;
-		}
-		s.hasMore = false;
-		s.result = [];
-		s.offset = 0;
-		query(callback);
-		Cache.put('SearchAccountsData', s);
-	};
-	$scope.doClear = function() {
-		s = $scope.s = {'data':{}};
-		Cache.remove('SearchAccountsData');
-	};
-	$scope.scroll = function(w) {
-		if (s.scrolling === true || s.loading === true || s.hasMore === false || s.result === undefined || s.result.length === 0) {
-			return;
-		}
-		s.scrolling = true;
-		$scope.getMore();
-	};
-	$scope.getMore = function() {
-		s.offset += 20;
-		query();
-	};
-	$scope.goToDetails = function(a) {
-		Menu.setSubPage(false);
-		Cache.put('currentAccount', a);
-		$location.path('/account');
-	};
-	$scope.back = function() {
-		$location.path('/');
-	};
-}]);
 
-app.controller('MainCtrl', ['$scope', '$location', 'alarmService', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService, Menu, Session, Cache, Demo) {
+app.controller('MainCtrl', ['$scope', '$location', 'alarmService', 'Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService, Logger,RaModel,Menu, Session, Cache, Demo) {
 	Menu.setActiveCode('/');
 	$scope.Menu = Menu;
 	$scope.Demo = Demo;
 	$scope.showIntro = Cache.get('showIntro');
+
+var tweets = Cache.get('tweets'), a = Cache.get('_a'), c, _limit = 20, $this = this;
+	$scope.sessionId = "";
+	
+	this.initScope = function() {
+		a.data = tweets;
+		a.selection = 'Tweets';
+		$scope.displayName = Session.get().displayName;
+		a.tweets = {};
+		a.tweets.data = [];
+		a.tweets.offset = 0;
+		a.tweets.initialized = false;
+		a.tweets.hasMore = false;
+		a.tweets.loading = false;
+
+		$scope.a = a;
+		$this.tweetsQuery();
+	};
+  	
+
 	if ($scope.showIntro === undefined) {
 		$scope.showIntro = true;
 	}
-	setTimeout(function(){
+/*	setTimeout(function(){
 		$scope.$apply(function(){
 			$scope.showIntro = false;
 			Cache.put('showIntro', $scope.showIntro);
 		});
 	}, 5000);
-/*
+*//*
 	$scope.userName = Session.get().displayName;
 	$scope.session = Session.get();
 */
+	
+	$scope.getMoreTweets = function() {
+		console.log("********");
+		if (a.tweets.loading || !a.tweets.hasMore) {
+			return;
+		}
+		a.tweets.offset += _limit;
+		$this.tweetsQuery();aler
+	};
+
+	this.tweetsQuery = function(){
+			a.tweets.loading = true;
+
+			RaModel.query({'dataSource':'TweetFeed'}, {'limit':_limit,'offset':a.tweets.offset, 'params':{'executeCountSql': 'N'}, 'select':['imageurl','tweet'],'sessionId':Session.get().sessionId}, function(result){
+					if (result.$error) {
+						Logger.showAlert(result.errorMessage, result.errorTitle);
+					} else {tweets
+						if (result.data.length > 0) {
+							a.tweets.data.push.apply(a.tweets.data, result.data);
+							if (result.data.length < _limit) {
+								a.tweets.hasMore = false;
+							} else {
+								a.tweets.hasMore = true;
+							}
+						} else {
+							a.tweets.hasMore = false;
+						}
+						Cache.put('_a', a);
+					}
+					a.tweets.loading = false;
+				}
+			);
+	   
+	};
+
+
 	$scope.signOff = function() {
 		Session.signOff();
 	};
+
+this.init = function(){
+		a = {};
+	};
+	if (a === undefined) {
+		this.init();
+		Cache.put('_a', a);
+	}
+	this.initScope();
+
 }]);
 
 
 
-app.controller('PeopleCtrl', ['$timeout','$rootScope','$scope','$http' ,'$location', '$window','RaModel', 'Session', 'Cache', 'Menu','Logger', function ($timeout,$rootScope,$scope, $http,$location,$window, RaModel,Session, Cache, Menu, Logger) {
+app.controller('ConnectionCtrl', ['$timeout','$rootScope','$scope','$http' ,'$location', '$window','RaModel', 'Session', 'Cache', 'Menu','Logger', function ($timeout,$rootScope,$scope, $http,$location,$window, RaModel,Session, Cache, Menu, Logger) {
 	var attendees = Cache.get('attendees'), a = Cache.get('_a'), c, _limit = 20, $this = this;
 	$scope.sessionId = "";
 	$scope.getMoreAttendees = function() {
@@ -405,6 +391,297 @@ app.controller('PeopleCtrl', ['$timeout','$rootScope','$scope','$http' ,'$locati
 }]);
 
 
+app.controller('PeopleCtrl', ['$timeout','$rootScope','$scope','$http' ,'$location', '$window','RaModel', 'Session', 'Cache', 'Menu','Logger', function ($timeout,$rootScope,$scope, $http,$location,$window, RaModel,Session, Cache, Menu, Logger) {
+	var peoples = Cache.get('peoples'), a = Cache.get('_a'), c, _limit = 20, $this = this;
+	$scope.sessionId = "";
+	
+	this.initScope = function() {
+		a.data = peoples;
+		a.selection = 'People';
+		$scope.displayName = Session.get().displayName;
+		a.peoples = {};
+		a.peoples.data = [];
+		a.peoples.offset = 0;
+		a.peoples.initialized = false;
+		a.peoples.hasMore = false;
+		a.peoples.loading = false;
+
+		a.peopleDetails = {};
+		a.peopleDetails.data = [];
+		a.peopleDetails.offset = 0;
+		a.peopleDetails.initialized = false;
+		a.peopleDetails.hasMore = false;
+		a.peopleDetails.loading = false;
+		a.peopleDetails.imagesloading = false;
+		$scope.a = a;
+		$this.peoplesQuery();
+	};
+  	
+  	$scope.getMorePeoples = function() {   
+		if (a.peoples.loading || !a.peoples.hasMore) {
+			return;
+		}
+		a.peoples.offset += _limit;
+		$this.peoplesQuery();
+	};
+	this.init = function(){
+		a = {'pageTitle':'People'};
+	};
+
+	$scope.getMorePeople = function() {
+		if (a.peoples.loading || !a.peoples.hasMore) {
+			return;
+		}
+		a.peoples.offset += _limit;
+		$this.peoplesQuery();
+	};
+
+	this.peoplesQuery = function(){
+			a.peoples.loading = true;
+
+			RaModel.query({'dataSource':'EventUsersV'}, {'limit':_limit,'offset':a.peoples.offset, 'params':{'executeCountSql': 'N'}, 'select':['userName','userId'],'sessionId':Session.get().sessionId,'orderBy': '#creationDate# DESC'}, function(result){
+					if (result.$error) {
+						Logger.showAlert(result.errorMessage, result.errorTitle);
+					} else {
+						if (result.data.length > 0) {
+							a.peoples.data.push.apply(a.peoples.data, result.data);
+							if (result.data.length < _limit) {
+								a.peoples.hasMore = false;
+							} else {
+								a.peoples.hasMore = true;
+							}
+						} else {
+							a.peoples.hasMore = false;
+						}
+						Cache.put('_a', a);
+					}
+					a.peoples.loading = false;
+				}
+			);
+	   
+	};
+
+
+	$scope.$watch('a.selection', function(newValue, oldValue){
+		Logger.log(oldValue + '->' + newValue);
+		//alert(newValue);
+		/*
+		a.peoples.initialized = true;
+		*/if (newValue === 'People') {
+			a.pageTitle = 'People';
+			
+			//$this.peoplesQuery();
+			if (a.peoples.initialized) {
+				return;
+			}
+			
+		} else if (newValue === 'peopleDetails') {
+			a.pageTitle = 'Attendee';
+		} 
+	});
+	$scope.$watch('a.peoples.current', function(a, o){
+		Logger.log(o + '->' + a);
+		if (o){
+			Logger.log(o.userId);
+		}
+		if (a){
+			$scope.a.pageTitle = 'People';
+			Logger.log(a.userId +  ',' + a.city + ', ' + a.state + ' ' + a.postalCode);
+			$this.peopleDetailsQuery(a.userId);
+			
+		}
+	}, true);
+	$scope.safeApply = function(fn) {
+	    var phase = this.$root.$$phase;
+	    if(phase == '$apply' || phase == '$digest') {
+		if(fn && (typeof(fn) === 'function')) {
+		  fn();
+		}
+	    } else {
+	    	//Logger.showAlert(phase+"****** else *****");
+	       this.$apply(fn);
+	    }
+	};
+	/* Start people Details */
+	this.peopleDetailsQueryInternal = function(pid){
+		//alert(pid);
+		RaModel.query({'dataSource':'UserSocialInfoV'}, {'limit':_limit,'offset':a.peopleDetails.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId,'data' :{'userId':pid}}, function(result){
+				if (result.$error) {
+					Logger.showAlert(result.errorMessage, result.errorTitle);
+				} else {
+					if (result.data.length > 0) {
+
+						a.peopleDetails.data.push.apply(a.peopleDetails.data, result.data);
+						a.peopleDetails.current = result.data[0];
+						
+						if (result.data.length < _limit) {
+							a.peopleDetails.hasMore = false;
+						} else {
+							a.peopleDetails.hasMore = true;
+						}
+
+					} else {
+						a.peopleDetails.hasMore = false;
+					}
+					Cache.put('_a', a);
+				}
+				a.peopleDetails.loading = false;
+			});
+	}
+
+	this.peopleDetailsQuery = function(pid){
+		a.peopleDetails.loading = true;
+		if(a.peopleDetails.data.length && a.peopleDetails.data.length > 0) {
+			var recordFound = false;
+			for(var counter = 0; counter < a.peopleDetails.data.length; counter ++) {
+				var peopleDetails = a.peopleDetails.data[counter];
+				if(pid === peopleDetails.userId) {
+					recordFound = true;
+					a.peopleDetails.loading = false;
+					a.peopleDetails.current = peopleDetails;
+					break;
+				}
+			}
+			if(!recordFound) {
+				console.log("Query again...");
+				$this.peopleDetailsQueryInternal(pid);	
+			} else {
+				console.log("Existing record");
+			}
+		} else {
+			console.log("No records found!");
+			$this.peopleDetailsQueryInternal(pid);
+		}
+	};
+
+	this.getMorePeopleDetails = function() {
+		if (a.peopleDetails.loading || !a.peopleDetails.hasMore) {
+			return;
+		}
+		a.peopleDetails.offset += _limit;
+		$this.orderQuery();
+	};
+	/* End peopleDetails */
+	if (a === undefined) {
+		this.init();
+		Cache.put('_a', a);
+	}
+	this.initScope();
+}]);
+
+
+
+app.controller('SponsersCtrl', ['$timeout','$rootScope','$scope','$http' ,'$location', '$window','RaModel', 'Session', 'Cache', 'Menu','Logger', function ($timeout,$rootScope,$scope, $http,$location,$window, RaModel,Session, Cache, Menu, Logger) {
+	var sponsers = Cache.get('sponsers'), a = Cache.get('_a'), c, _limit = 20, $this = this;
+	$scope.sessionId = "";
+	
+	this.initScope = function() {
+		a.data = sponsers;
+		a.selection = 'Sponsers';
+		$scope.displayName = Session.get().displayName;
+		a.sponsers = {};
+		a.sponsers.data = [];
+		a.sponsers.offset = 0;
+		a.sponsers.initialized = false;
+		a.sponsers.hasMore = false;
+		a.sponsers.loading = false;
+
+		a.sponserDetails = {};
+		a.sponserDetails.data = [];
+		a.sponserDetails.offset = 0;
+		a.sponserDetails.initialized = false;
+		a.sponserDetails.hasMore = false;
+		a.sponserDetails.loading = false;
+		a.sponserDetails.imagesloading = false;
+		$scope.a = a;
+		$this.sponsersQuery();
+	};
+  	this.init = function(){
+		a = {'pageTitle':'Sponsors'};
+	};
+
+	$scope.getMoreSponsers = function() {
+		if (a.sponsers.loading || !a.sponsers.hasMore) {
+			return;
+		}
+		a.sponsers.offset += _limit;
+		$this.sponsersQuery();
+	};
+
+	this.sponsersQuery = function(){
+			a.sponsers.loading = true;
+
+			RaModel.query({'dataSource':'EventHolders'}, {'limit':_limit,'offset':a.sponsers.offset, 'params':{'executeCountSql': 'N'},'data':{'eventId':1,'holderType':'SPONSOR'}, 'select':['urlText','holderName','holderAbout2'],'sessionId':Session.get().sessionId,'orderBy': '#holderName#'}, function(result){
+					if (result.$error) {
+						Logger.showAlert(result.errorMessage, result.errorTitle);
+					} else {
+						if (result.data.length > 0) {
+							a.sponsers.data.push.apply(a.sponsers.data, result.data);
+							if (result.data.length < _limit) {
+								a.sponsers.hasMore = false;
+							} else {
+								a.sponsers.hasMore = true;
+							}
+						} else {
+							a.sponsers.hasMore = false;
+						}
+						Cache.put('_a', a);
+					}
+					a.sponsers.loading = false;
+				}
+			);
+	   
+	};
+
+
+	$scope.$watch('a.selection', function(newValue, oldValue){
+		Logger.log(oldValue + '->' + newValue);
+		//alert(newValue);
+		/*
+		a.sponsers.initialized = true;
+		*/if (newValue === 'Sponsers') {
+			a.pageTitle = 'Sponsors';
+			
+			//$this.sponsersQuery();
+			if (a.sponsers.initialized) {
+				return;
+			}
+			
+		} else if (newValue === 'sponserDetails') {
+			a.pageTitle = 'Sponsor Details';
+		} 
+	});
+	$scope.$watch('a.sponsers.current', function(a, o){
+		Logger.log(o + '->' + a);
+		if (o){
+			Logger.log(o.userId);
+		}
+		if (a){
+			$scope.a.pageTitle = 'Sponser Details';
+	//		$this.sponserDetailsQuery(a.userId);
+			
+		}
+	}, true);
+	$scope.safeApply = function(fn) {
+	    var phase = this.$root.$$phase;
+	    if(phase == '$apply' || phase == '$digest') {
+		if(fn && (typeof(fn) === 'function')) {
+		  fn();
+		}
+	    } else {
+	    	//Logger.showAlert(phase+"****** else *****");
+	       this.$apply(fn);
+	    }
+	};
+	/* End peopleDetails */
+	if (a === undefined) {
+		this.init();
+		Cache.put('_a', a);
+	}
+	this.initScope();
+}]);
+
+
 app.controller('EventInfoCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
 	var currEvent = Cache.get('currEvent'), a = Cache.get('_a'), c, _limit = 20, $this = this;
 	this.initScope = function() {
@@ -430,7 +707,7 @@ app.controller('EventInfoCtrl', ['$scope', '$location', 'alarmService','Logger',
 
 	this.eventsQuery = function(){
 			a.events.loading = true;	 
-			RaModel.query({'dataSource':'Events'}, {'limit':_limit,'offset':a.events.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'select': ['eventInfo','startDate','venue'],'orderBy': '#creationDate# DESC'}, function(result){
+			RaModel.query({'dataSource':'Events'}, {'limit':_limit,'offset':a.events.offset,'data':{'eventId':1}, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'select': ['eventInfo','startDate','venue'],'orderBy': '#creationDate# DESC'}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
@@ -488,7 +765,7 @@ app.controller('MyEventCtrl', ['$scope', '$location', 'alarmService','Logger','R
 
 	this.eventsQuery = function(){
 			a.events.loading = true;	 
-			RaModel.query({'dataSource':'Events'}, {'limit':_limit,'offset':a.events.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'select': ['eventName',	'startDate','venue'],'orderBy': '#creationDate# DESC'}, function(result){
+			RaModel.query({'dataSource':'Events'}, {'limit':_limit,'offset':a.events.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId,'data':{'eventId':1}, 'select': ['eventName',	'startDate','venue'],'orderBy': '#creationDate# DESC'}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
@@ -543,9 +820,18 @@ app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger'
 		Logger.showAlert("You are joined this event");
 	};
 
+	$scope.getMoreSchedules = function() {
+		console.log("********");
+		if (a.schedule.loading || !a.schedule.hasMore) {
+			return;
+		}
+		a.schedule.offset += _limit;
+		$this.scheduleQuery();
+	};
+
 	this.scheduleQuery = function(){
 			a.schedule.loading = true;	 
-			RaModel.query({'dataSource':'EventSchedule'}, {'limit':_limit,'offset':a.schedule.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'data':{eventId:1},'select': ['startTime','endTime','name','venue'],'orderBy': '#creationDate# DESC'}, function(result){
+			RaModel.query({'dataSource':'EventSchedule'}, {'limit':_limit,'offset':a.schedule.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'data':{eventId:1},'select': ['startTime','endTime','name','venue']}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
@@ -582,7 +868,7 @@ app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger'
 }]);
 
 
-app.controller('ProfileCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
+app.controller('ProfileCtrl', ['$scope', '$location','$rootScope', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, $rootScope,alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
 	
 	var currProfile = Cache.get('currProfile'), a = Cache.get('_a'), c, _limit = 20, $this = this;
 	
@@ -594,13 +880,19 @@ app.controller('ProfileCtrl', ['$scope', '$location', 'alarmService','Logger','R
 		a.selection = 'profile';
 		//$scope.displayName = Session.get().displayName;
 		a.profile = {};
+		
 		a.profile.data = [];
 		a.profile.offset = 0;
 		a.profile.initialized = false;
 		a.profile.hasMore = false;
 		a.profile.loading = false;
 		$scope.a = a;
-		$this.profileQuery();
+		//alert(Session.get().userId);
+		if($rootScope.userprofile) {
+			a.profile = $rootScope.userprofile;
+		} else {
+			$this.profileQuery();
+		}
 	};
 	
 	this.init = function(){
@@ -613,6 +905,7 @@ app.controller('ProfileCtrl', ['$scope', '$location', 'alarmService','Logger','R
 
 	this.profileQuery = function(){
 			a.profile.loading = true;	 
+			//alert(Session.get().userId+"******");
 			RaModel.query({'dataSource':'UserSocialInfoV'}, {'limit':_limit,'offset':a.profile.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'select': ['firstName','lastName','title','emailAddress','phone','linkedinName','twitterName'],'data' :{'userId':Session.get().userId},'orderBy': '#creationDate# DESC'}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
@@ -647,54 +940,6 @@ app.controller('ProfileCtrl', ['$scope', '$location', 'alarmService','Logger','R
 
 
 
-app.controller('TasksCtrl', ['$scope', '$location', 'alarmService', 'Menu', function ($scope, $location, alarmService, Menu) {
-	function init() {
-		$scope.alarms = alarmService.getAlarms();
-	}
-	init();
-	$scope.goToDetails = function(alarm) {
-		if (Menu.isOpen()) {
-			Menu.toggle();
-			return;
-		}
-		Menu.setSubPage(false);
-		$location.path('/details/' + alarm.id);
-	};
-	$scope.create = function() {
-		Menu.setSubPage(false);
-		$location.path('/create');
-	};
-}]);
-
-app.controller('DetailsCtrl', ['$scope', '$routeParams', '$location', 'alarmService', 'Menu', function ($scope, $routeParams, $location, alarmService, Menu) {
-	function init() {
-		var alarmId = ($routeParams.alarmId) ? parseInt($routeParams.alarmId, 10) : 0;
-		if (alarmId >= 0) {
-			$scope.alarm = alarmService.getAlarm(alarmId);
-		}
-	}
-	init();
-	$scope.back = function() {
-		Menu.setSubPage(true);
-		$location.path('/tasks');
-	};
-}]);
-
-app.controller('SettingsCtrl', ['$scope', '$location', 'Menu', 'Cache', 'Logger', 'Demo', function ($scope, $location, Menu,Cache, Logger, Demo) {
-	$scope.s = Cache.get('settings');
-	if ($scope.s === undefined) {
-		$scope.s = {};
-		Demo.setAuto(true);
-		$scope.s.selection = 'Demo';
-	}
-	$scope.Demo = Demo;
-	Menu.setActiveCode('settings');
-	$scope.Menu = Menu;
-	$scope.$watch('s', function(n, o){
-		Cache.put('settings', $scope.s);
-	});
-}]);
-
 app.controller('LoginCtrl', ['$scope', '$location', 'Session', 'Menu', function ($scope, $location, Session, Menu) {
 	Menu.setSubPage(true);
 	setTimeout(function(){
@@ -707,72 +952,41 @@ app.controller('LoginCtrl', ['$scope', '$location', 'Session', 'Menu', function 
 			}
 		});
 	};
-}]);
-app.controller('CreateCtrl', ['$scope', '$location', 'alarmService', 'Menu', function ($scope, $location, alarmService, Menu) {
-	function init() {
-		$scope.date = '2013-06-20';
-		$scope.time = '09:30';
-		$scope.msg = alarmService.getCount()+1 + ' New message goes here...';
-	}
-	init();
-	$scope.back = function() {
-		Menu.setSubPage(true);
-		$location.path('/tasks');
-	};
-	$scope.createAlarm = function() {
-		var d = $scope.date;
-		var t = $scope.time;
-		var m = $scope.msg;
-		alarmService.addAlarm(d, t, m);
-		init();
-		$scope.back();
-	};
-}]);
-app.controller('MapCtrl', ['$scope', '$location', 'alarmService', 'Menu', 'Session', 'Cache', 'Logger', function ($scope, $location, alarmService, Menu, Session, Cache, Logger) {
-	Menu.setActiveCode('map');
-	$scope.Menu = Menu;
-	var geocoder;
-	var map;
-	function initialize() {
-		geocoder = new google.maps.Geocoder();
-		var latlng = new google.maps.LatLng(33.67162,-117.857189);
-		var mapOptions = {
-			zoom: 12,
-			center: latlng,
-			mapTypeId: google.maps.MapTypeId.ROADMAP,
-			disableDefaultUI: true
-		};
-		map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-		codeAddress();
-	}
-	function codeAddress() {
-		var address = Cache.get('mapAddress');
-		if (address === undefined) {
-			address = '19200 Von Karman Avenue, Irvine, CA 92612';
-		}
-		$scope.address = address;
-		if (address){
-			geocoder.geocode( { 'address': address}, function(results, status) {
-				if (status === google.maps.GeocoderStatus.OK) {
-					map.setCenter(results[0].geometry.location);
-					var marker = new google.maps.Marker({
-						map: map,
-						position: results[0].geometry.location,
-						title: address,
-						animation: google.maps.Animation.DROP
-					});
-					var infowindow = new google.maps.InfoWindow({
-						content: address
-					});
 
-					google.maps.event.addListener(marker, 'click', function() {
-						infowindow.open(map,marker);
-					});
-				} else {
-					Logger.showAlert('Geocode was not successful for the following reason: ' + status);
-				}
+	$scope.getLinkedInData = function() {
+		if(!$scope.hasOwnProperty("userprofile")){
+		//	alert("********34343");
+			IN.API.Profile("me").fields(
+					[ "id", "firstName", "lastName","emailAddress", "pictureUrl",
+							"publicProfileUrl" ]).result(function(result) {
+				// set the model
+				$rootScope.$apply(function() {
+					var userprofile =result.values[0]
+					$rootScope.userprofile = userprofile;
+					$rootScope.loggedUser = true;
+					alert("**email** inlogin"+userprofile.emailAddress+"*******");
+			    	//go to main
+			var dn = userprofile.firstName+""+userprofile.lastName;
+			    	var ea = userprofile.emailAddress;
+			    	var callback = function(response,status) {
+			    			alert(status);
+			    			console.log("response:"+response);
+			    			$location.path("/main");		
+			    	}
+			    	QCalls.waitForAllQCalls(homeBaseUrl+'h/customlogin?_dn='+dn+"&_ea="+ea,callback);
+				});
+			}).error(function(err) {
+				$scope.error = err;
+				alert(err); 
 			});
 		}
-	}
-	initialize();
+	};
+  //logout and go to login screen
+	$scope.logoutLinkedIn = function() {
+    //retrieve values from LinkedIn
+		IN.User.logout();
+		delete $rootScope.userprofile;
+		$rootScope.loggedUser = false;
+		$location.path("/login");
+	};
 }]);
