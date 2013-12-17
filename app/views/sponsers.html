@@ -60,13 +60,13 @@
 
 				<ul class="list inset" >
 				<li ng-show="a.sponsers.current.website" style="padding: 20px 10px 20px 10px;">
-				<a  href="{{a.sponsers.current.website}} != ''"><font color="blue"><i class="icon-globe"></i>   {{a.sponsers.current.website}}</font></a>
+				<a  stop-event="click" ng-click="openWindow(a.sponsers.current.website)"><font color="blue"><i class="icon-globe"></i>   {{a.sponsers.current.website}}</font></a>
 				</li>	
 				<li ng-show="a.sponsers.current.linkedin" style="padding: 20px 10px 20px 10px;">
-				<a href="{{a.sponsers.current.linkedin}}"><font color="blue"><i class="icon-linkedin-sign"></i>  on LinkedIn<font></h4></a>
+				<a stop-event="click" ng-click="openWindow(a.sponsers.current.linkedin)"><font color="blue"><i class="icon-linkedin-sign"></i>  on LinkedIn<font></h4></a>
 				</li>	
 				<li ng-show="a.sponsers.current.twitter" style="padding: 20px 10px 20px 10px;">
-				<a href="{{a.sponsers.current.twitter}}"><i class="icon-twitter-sign"></i>  on  Twitter</a>
+				<a stop-event="click" ng-click="openWindow(a.sponsers.current.twitter)"><i class="icon-twitter-sign"></i>  on  Twitter</a>
 				</li>		
 			</ul>
 		</div>

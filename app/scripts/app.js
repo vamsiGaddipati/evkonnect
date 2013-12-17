@@ -336,7 +336,7 @@ app.service('Session', ['RaModel', '$location','$rootScope', 'Logger', function 
 				$rootScope.loggedUser = false;
 				//$location.reload();
 				$this.showLogin();
-				$location.reload(true);
+				//$location.reload(true);
 			 
 			} else {
 			RaModel.save({'dataSource':'signoff'}, {'sessionId': session.sessionId},

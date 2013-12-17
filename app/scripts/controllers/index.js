@@ -7,6 +7,7 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 	Demo.indexScope = $scope;
 	$scope.Demo = Demo;
 	var $this = this;
+	$scope.loading = false;
 	function init() {
 		$scope.menuItems = Menu.getItems();
 		Menu.clear();
@@ -39,8 +40,6 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 
 	this.insertNewUser = function(userId) {
 		var data = $scope.personDetails;
-	//	alert(data.firstName+","+data.lastName+","+data.title+","+data.phoneNumbers);
-	//	alert(data.publicProfileUrl+","+data.profileUrl);
 		RaModel.save({'dataSource':'Users','operation':'insert'}, { "sessionId":Session.get().sessionId,
 	  'firstName':data.firstName,
 	  'lastName':  data.lastName,
@@ -55,13 +54,79 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 	  'userId':userId,
 
 	 	}, function(result){
-			//alert(result+"asdfasdfasd");
 			console.log(result);
 			$location.path("/myevents");		
-			//Logger.showAlert("Profile Saved !!!","Update");
 		});
 
 	}
+
+	$scope.email = "";
+	$scope.guestLogin = function(emailAddress) {
+		if(emailAddress === '' || emailAddress === null)  {
+			Logger.showAlert("Please enter valid email address","Error");
+			return;
+		}
+
+		if(emailAddress.indexOf('@') < 0 || emailAddress.indexOf('.')  < 0 || emailAddress.length <3 )  {
+			Logger.showAlert("Please enter valid email address","Error");
+			return;
+		}
+		$scope.loading = true; 
+
+		var callback = function(response) {
+		
+	    			if(response.indexOf("@_") > -1) {
+			    				var responsenative = response.substring(0,response.indexOf("@_"));
+			    				var responjson = angular.fromJson(responsenative);
+			    				if(responjson.Error) {
+			    					Logger.showAlert(responjson.Error,"Error");
+			    					return;
+			    				}
+			    				Session.set("sessionId",responjson.sessionId);
+			    				Session.set("userId",responjson.userId);
+			    				Session.set("displayName",emailAddress);
+			    				
+			    				Session.store();
+			    				if(responjson.userCount == 0) {
+				    				console.log("********** new user*************"+responjson.userId);
+				    				var personDetails = {};
+				    				personDetails.firstName = emailAddress;
+				    				personDetails.lastName = "";
+				    				personDetails.title = "";
+									personDetails.emailAddress = emailAddress;
+				    				$scope.personDetails = personDetails;
+				    				$scope.loading = false; 
+				    				$this.insertNewUser(responjson.userId);
+			    				} else {
+			    					console.log("********** existing*************");
+			    					$scope.loading = false; 
+			    					$location.path("/myevents");		
+			    				}
+			    			} else {
+			    				$scope.loading = false;
+			    				/*alert(response);
+			    				var responjson = angular.fromJson(response);
+			    				if(responjson.Error) {
+			    					Logger.showAlert(responjson.Error,"Error");
+			    					return;
+			    				} else {*/
+			    					Logger.showAlert("Unable to create/access user information!"+response,"Error");
+			    				//}
+			    			}
+			    
+	};
+
+		    	//alert(phoneNumbers)
+			    	//var requrl = "pictureUrl="+pictureUrl+"&publicProfileUrl="+publicProfileUrl
+			    	            //  +"&firstName="+firstName+"&lastName="+lastName     
+			    	             // +"&phoneNumbers="+phoneNumbers;
+			    	QCalls.waitForAllQCalls(homeBaseUrl+'h/customlogin?_dn='+emailAddress+"&_ea="+emailAddress,callback);
+	
+
+	}
+
+
+
 	$scope.googleLogin = function(obj) {
 
 		console.log(obj);
@@ -73,6 +138,7 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
     var title = obj.occupation;
     var pictureUrl = obj.image.url;
     var publicProfileUrl = obj.url;
+    $scope.loading = true; 
     console.log("Getting here.....");
 	/*var request = $.ajax({
 	    url: "http://tevents.rapapp.com/h/customlogin",
@@ -90,7 +156,7 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 			    				Session.set("displayName",firstName+" "+lastName);
 			    				
 			    				Session.store();
-			    				alert(Session.get().displayName);
+			    				//alert(Session.get().displayName);
 			    				//alert("stored");
 			    				if(responjson.userCount == 0) {
 				    				console.log("********** new user*************8");
@@ -106,10 +172,12 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 				    				$this.insertNewUser(responjson.userId);
 			    				} else {
 			    					console.log("********** existing*************");
+			    					$scope.loading  = false;
 			    					$location.path("/myevents");		
 			    				}
 			    			} else {
 			    				console.log("Error:"+response);
+			    				$scope.loading = false; 
 			    				Logger.showAlert("Unable to create/access user information!"+response,"Error");
 			    			}
 			    
@@ -125,7 +193,9 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 	}
 	$scope.personDetails = {};
 	$scope.getLinkedInData = function() {
+	
 		if(!$scope.hasOwnProperty("userprofile")){
+		$scope.loading = true; 
 			//alert("********34343");
 			IN.API.Profile("me").fields(
 					[ "id","firstName", "lastName","emailAddress", "pictureUrl",
@@ -167,15 +237,18 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 			    				var responjson = angular.fromJson(responsenative);
 			    				Session.set("sessionId",responjson.sessionId);
 			    				Session.set("userId",responjson.userId);
-			    				Session.set("displayName",dn);
+			    				Session.set("displayName",$scope.personDetails.firstName+" "+$scope.personDetails.lastName);
 			    				Session.store();
+			    				//alert(Session.get().displayName);
 			    				$scope.personDetails = personDetails;
 
 			    				if(responjson.userCount == 0) {
 				    				console.log("********** new user*************8");
 								$this.insertNewUser(responjson.userId);
+								$scope.loading = false; 
 								} else {
 									console.log("********** existing*************");
+									$scope.loading = false; 
 			    					$location.path("/myevents");		
 			    					
 								}
@@ -183,6 +256,7 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 			    				
 			    			} else {
 			    				console.log("Error:"+response);
+			    				$scope.loading = false; 
 			    				Logger.showAlert("Unable to create/access user information!"+response,"Error");
 			    			}
 			    			

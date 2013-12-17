@@ -103,13 +103,13 @@
 					  	<span style="font-size:15px;color:#0882f0">
 					  	<i class="icon-twitter"></i>
 					   
-					   	<a href="http://twitter.com/{{a.peoples.current.twitterUsername}}">
+					   	<a stop-event="click" ng-click="openWindow('http://twitter.com/{{a.peoples.current.twitterUsername}}')">
 				  			 {{a.peoples.current.twitterUsername}}
 						</a></span>
 				</li>
 				  <li ng-show="a.peoples.current.publicProfileUrl"  style="padding: 10px 30px 10px 15px;" >
 				  <span style="font-size:15px;color:#0882f0"><i class="icon-linkedin"></i>    
-				  		<a href="{{a.peoples.current.publicProfileUrl}}">{{a.peoples.current.firstName}} on LinkedIn
+				  		<a stop-event="click" ng-click="openWindow(a.peoples.current.publicProfileUrl)">{{a.peoples.current.firstName}} on LinkedIn
 				  </a>
 				  </span>
 				  </li>

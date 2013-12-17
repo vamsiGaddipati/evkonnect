@@ -1,29 +1,19 @@
 <div class="page">
 <header class="bar-title">
 	<h1 class="title">
-		<img src="logo.png" height="35" width="80">
-		Event Conference</h1>
+		<img src="http://www.tiesummit.com/img/logo.png" height="35" width="80">
+		TiE ENTREPRENEURIAL SUMMIT 2013     
+</h1>
 
 </header>
 <div class="content">   
-	<space></space>	
-	<!-- <div style="background-image:url('/home/srikanth/Downloads/2.jpg')">
 
-	</div>
- -->	<div class="input-group inset">
-		<div class="input-row">
-			<label>Username</label>
-			<input type="text" placeholder="username@domain.com" ng-model="username">
-		</div>
-		<div class="input-row">
-			<label>Password</label>
-			<input type="password" ng-model="password">
-		</div>
-	</div>
-	<a class="button-main button-block" ng-click="signIn()">Sign In</a>
-	<div align="center">
-	<script type="in/Login" data-label="action">
-</script>
+	<space></space>	
+	<ul class="list inset">
+  <li class="list-divider"><strong>Sign in with</strong></li>
+  <li style=""><script type="in/Login" data-label="action"></script></li>
+  
+  <li style="">
 	<span id="signinButton">
 	  	<span
 	    class="g-signin"
@@ -34,9 +24,29 @@
 	    data-requestvisibleactions="http://schemas.google.com/AddActivity"
 	    data-scope="https://www.googleapis.com/auth/plus.login  https://www.googleapis.com/auth/plus.profile.emails.read">
 	  	</span>
-	</span>
+	</span></li>
+  <li >Continue using registered E-mail</li>
+   <li>	<div class="input-row">
+			<input type="text" placeholder="username@domain.com" style="height:35px" ng-model="email">
+			<a stop-event="click" ng-click="guestLogin(email)" class="button-main" style="top:45%"><i class="icon-signin"></i> </a>
+		</div>
+	</li>
+</ul>
+	<div align="center">
+		<i ng-show="loading" class="icon-spinner icon-spin icon-large" style="display: none;"></i> 
+	</div>
+	<div align="center" style="margin-top:40%;">
+<ul>
+	<li>	<div class="input-row">
+			Powered by 
+			<a href=""><img src="http://www.telidos.com/img/logo.png" height="30px" width="60px"> </a>
+		</div>
+	</li>
+</ul>
 </div>
 	</div>
+
+
 </div>
 </div>
 <script type="text/javascript">

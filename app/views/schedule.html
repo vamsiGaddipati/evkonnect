@@ -8,7 +8,10 @@
 
 	<a ng-if="a.selection==='ScheduleDetails'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='Schedule';" stop-event="click">
 			<i class="icon-arrow-left icon-large"></i>
-		</a>
+	</a>
+	<a ng-if="a.selection==='ScheduleRatings'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='ScheduleDetails';" stop-event="click">
+			<i class="icon-arrow-left icon-large"></i>
+	</a>
 
 		<h1 class="title">
 
@@ -49,7 +52,6 @@
 					{{r.startTimeString}}  
 					<any ng-repeat="us in a.userSchedule.data ">
 					<spn ng-if="us.eventScheduleId == r.eventScheduleId;" align="center;">
-					{{$parent.isScheduled=true}}
 						<font color="color:blue"><i class="icon-calendar"></i></font></span>
 					</any>	
 				</li>
@@ -84,6 +86,9 @@
 					<strong>{{a.schedule.current.name}}</strong>
 
 					</div>
+					<div>
+						<a class="button" ng-click="a.selection='ScheduleRatings'" stop-event="click"><i class="icon-star-half-empty"></i> Rate</a>
+					</div>
 					<div style="margin-bottom:10px"></div>
 						<div>
 							<i class="icon-time"></i> {{a.schedule.current.startTimeString}} - {{a.schedule.current.endTimeString}} 
@@ -112,5 +117,49 @@
 						{{r.schedule.current.about}}
 					</li>
 				</ul>
-		</div>
+			</div>
+				<div class="tab"  ng-switch-when="ScheduleRatings">
+					<form>
+					<ul class="list inset">
+				<!-- 		  <li ng-class="day1=='Y'?'active':''">
+      <a stop-event="click" ng-click="day1='Y';day2='N';day3='N';day1Events()" ng-class="active">18-Dec</a>
+    </li>
+    <li ng-class="day2=='Y'?'active':''" >
+      <a stop-event="click" ng-click="day2='Y';day3='N';day1='N';day2Events()" >19-Dec</a>
+    </li>
+    <li ng-class="day3=='Y'?'active':''">
+      <a stop-event="click"  ng-click="day3='Y';day2='N';day1='N';day3Events()">20-Dec</a>
+    </li> -->
+					<li style="margin: -10px -10px -10px -5px;"> 
+						<ul class="segmented-controller">
+						  <li ng-class="poor=='Y'?'active':''" style="padding: 15px 30px 20px 10px;">
+						    <a stop-event="click" ng-click="poor='Y';good='N';great='N';" ><i class="icon-star-empty icon-2x"></i><font size="1px">Avg</font></a>
+						  </li>
+						  <li ng-class="good=='Y'?'active':''" style="padding: 15px 30px 20px 10px;">
+						    <a stop-event="click" ng-click="poor='N';good='Y';great='N';" ng-class="active"> <i class="icon-star-half-empty icon-2x"></i><font size="2px">  Good</font></a>
+						  </li>
+						  <li ng-class="great=='Y'?'active':''" style="padding: 15px 30px 20px 10px;">
+						    <a stop-event="click" ng-click="poor='N';good='N';great='Y';" ng-class="active"><i class="icon-star icon-2x"></i><font size="3px" >Great</font></a>
+						  </li>
+						</ul>
+					</li>
+				</ul>
+
+ 				<div style="margin-top:10px;margin-left:15px;margin-bottom:5px;margin-bottom:5px">Comments</div>
+ 				<div>
+ 				 <div align="center"> <textarea rows="10" style="width:95%" ng-model="comments"></textarea></div>
+ 				</div>
+ 					<ul class="list inset">
+						<li >
+						Submit Anonymously 
+						<input type="hidden" ng-model="subAnany">
+						<div class="toggle" ng-class='subAnany?"active":""' ng-click="subAnany=!subAnany;" ng-swipe-right="subAnany=true;" ng-swipe-left="subAnany=false;">
+					      <div class="toggle-handle"></div>
+					    </div>
+					
+						</li>
+					</ul>
+					<a class="button-main button-block button-positive" ng-click="sendFeedback(subAny,comments,poor,good,great)">Submit</a>
+				</form>
+			</div>
 </div>

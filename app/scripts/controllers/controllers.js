@@ -41,7 +41,7 @@ var tweets = Cache.get('tweets'), a = Cache.get('_a'), c, _limit = 20, $this = t
 */
 	
 	$scope.getMoreTweets = function() {
-		console.log("********");
+		console.log("********"+a.tweets.hasMore);
 		if (a.tweets.loading || !a.tweets.hasMore) {
 			return;
 		}
@@ -52,12 +52,14 @@ var tweets = Cache.get('tweets'), a = Cache.get('_a'), c, _limit = 20, $this = t
 	this.tweetsQuery = function(){
 			a.tweets.loading = true;
 			//alert(_limit +"-"+a.tweets.offset);
-			RaModel.query({'dataSource':'TweetFeed'}, {'limit':_limit,'offset':a.tweets.offset, 'params':{'executeCountSql': 'N'}, 'select':['imageurl','tweet'],'sessionId':Session.get().sessionId}, function(result){
+			RaModel.query({'dataSource':'TweetFeed'}, {'limit':_limit,'offset':a.tweets.offset, 'params':{'executeCountSql': 'N'}, 'select':['imageurl','tweet'],'data':{'skipPagination':'Y'}, 'sessionId':Session.get().sessionId}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
-					} else {tweets
+					} else {
+						//tweets
 						if (result.data.length > 0) {
 							a.tweets.data.push.apply(a.tweets.data, result.data);
+							console.log(result.data.length+"*******");
 							if (result.data.length < _limit) {
 								a.tweets.hasMore = false;
 							} else {
@@ -262,26 +264,6 @@ app.controller('ConnectionCtrl', ['$timeout','$rootScope','$scope','$http' ,'$lo
 	       this.$apply(fn);
 	    }
 	};
-
-	
-	$scope.insertComments = function(pid,userid,comments) {
-		if(comments === '') return false;
-		a.patientComments.loading = true;
-		RaModel.save({'dataSource':'RefferralComments','operation':'insert'}, { "sessionId":Session.get().sessionId,
-		  'patientId':pid,
-		  'userId':  userid,
-	  	  "comments":comments
-
-		}, function(result){
-				if (result.$error) {
-					Logger.showAlert(result.errorMessage,result.errorTitle);
-				} else {
-					$this.loadComments(pid);
-				}
-		});
-	};
-	
-
 	/* End */
 
 	/* Start attendee Details */
@@ -416,6 +398,10 @@ app.controller('PeopleCtrl', ['$timeout','$rootScope','$scope','$http' ,'$locati
 		$scope.a = a;
 		$this.peoplesQuery();
 	};
+	$scope.openWindow = function(url) {
+		console.log("Window url:"+url);
+		$window.open(url);
+	}
   	
   	$scope.getMorePeoples = function() {   
 		if (a.peoples.loading || !a.peoples.hasMore) {
@@ -639,6 +625,10 @@ app.controller('SponsersCtrl', ['$timeout','$rootScope','$scope','$http' ,'$loca
 		a = {'pageTitle':'Sponsors'};
 	};
 
+	$scope.openWindow = function(url) {
+		console.log("Window url:"+url);
+		$window.open(url);
+	}
 	$scope.getMoreSponsers = function() {
 		if (a.sponsers.loading || !a.sponsers.hasMore) {
 			return;
@@ -771,7 +761,7 @@ app.controller('EventInfoCtrl', ['$scope', '$location', 'alarmService','Logger',
 	};
 
 	if (a === undefined) {
-		alert("**");
+		//alert("**");
 		this.init();
 		Cache.put('_a', a);
 	}
@@ -785,6 +775,7 @@ app.controller('MyEventCtrl', ['$scope', '$location', 'alarmService','Logger','R
 	this.initScope = function() {
 		a.data = currEvent;
 		a.selection = 'events';
+		//alert(Session.get().displayName);
 		$scope.displayName = Session.get().displayName;
 		a.events = {};
 		a.events.data = [];
@@ -829,7 +820,7 @@ app.controller('MyEventCtrl', ['$scope', '$location', 'alarmService','Logger','R
 	};
 
 	if (a === undefined) {
-		alert("**");
+		//alert("**");
 		this.init();
 		Cache.put('_a', a);
 	}
@@ -842,6 +833,14 @@ app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger'
 	$scope.day1 = "Y";
 	$scope.day2 = "N";
 	$scope.day3 = "N";
+
+	$scope.poor = "N";
+	$scope.good = "Y";
+	$scope.great = "N";
+	$scope.subAnany = "";
+	$scope.comments = "";
+
+	
 	$scope.isScheduled = false;
 	this.initScope = function() {
 		a.data = currSchedule;
@@ -917,8 +916,41 @@ $scope.$watch('a.selection', function(newValue, oldValue){
 			
 		} else if (newValue === 'ScheduleDetails') {
 			a.pageTitle = 'Schedule Details';
-		} 
+		}else if (newValue === 'ScheduleRatings') {
+			a.pageTitle = 'Feedback';
+		}  
 	});
+
+
+$scope.sendFeedback = function(subAny,comments,poor,good,great) {
+		//comments,subAnany
+		var submittedBy = "";
+		if(subAny) {
+			submittedBy =  Session.get().userId;
+		}
+		var rating = "";
+		if(poor === "Y") {
+			rating = 1;
+		}
+
+		if(good === "Y") {
+			rating = 2;
+		}
+		if(great === "Y") {
+			rating = 3;
+		}
+		
+		RaModel.save({'dataSource':'EventScheduleFeedback','operation':'insert'}, { "sessionId":Session.get().sessionId,
+	  'comments':comments,
+	  'eventScheduleId':  a.schedule.current.eventScheduleId,
+	  "rating":rating,                      
+	  "submittedBy":submittedBy
+	   
+	}, function(result){
+		console.log(result);
+		Logger.showAlert("Thanks for your feedback!!!","Update");
+	});
+	}
 
 	$scope.scheduleMyEvent = function(isSelected,eventId) {
 		console.log("Selected:"+isSelected+" id:"+eventId);
@@ -939,7 +971,6 @@ $scope.$watch('a.selection', function(newValue, oldValue){
 				$this.removeByValue(a.userSchedule.data,newrow);
 
 			}
-			//$location.path("/myevents");		
 			Logger.showAlert("Added to your schedule!!!","Update");
 		});
 
@@ -1010,7 +1041,7 @@ $scope.$watch('a.selection', function(newValue, oldValue){
 	};
 
 	if (a === undefined) {
-		alert("**");
+		//alert("**");
 		this.init();
 		Cache.put('_a', a);
 	}
@@ -1135,7 +1166,7 @@ app.controller('LoginCtrl', ['$scope', '$location', 'Session', 'Menu', function 
 					var userprofile =result.values[0]
 					$rootScope.userprofile = userprofile;
 					$rootScope.loggedUser = true;
-					alert("**email** inlogin"+userprofile.emailAddress+"*******");
+					//alert("**email** inlogin"+userprofile.emailAddress+"*******");
 			    	//go to main
 			var dn = userprofile.firstName+""+userprofile.lastName;
 			    	var ea = userprofile.emailAddress;
