@@ -4,6 +4,10 @@
 			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
 			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
 		</a>	
+
+	<a ng-if="a.selection==='PeopleDetails'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='People';" stop-event="click">
+			<i class="icon-arrow-left icon-large"></i>
+		</a>
 		<!-- 
 		<a ng-hide="a.selection==='peopleDetails'" class="button" ng-click="back()"  stop-event="click" style="margin-left:0px;margin-top: 2px;">
 			<i class="icon-arrow-left icon-large"></i>
@@ -13,81 +17,107 @@
 		<i ng-show="a.loading || a.peoples.loading || a.peopleDetails.loading " class="icon-spinner icon-spin icon-large" style="display: none;"></i> 	
 		<img src="" class="headerlogo"/> {{a.pageTitle}}</h1>
 		
-	<a ng-if="a.selection==='PeopleDetails'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='People';" stop-event="click">
-			<i class="icon-remove icon-large"></i>
-		</a>
 	</header>
 	
 	<div class="content  slide" ng-switch on="a.selection">
 			
 			<div class="tab" ng-switch-when="People" infinite-scroll="getMorePeople()" infinite-scroll-distance="10">
-				<ul class="list inset">
+				<div style="margin-bottom:10px"> </div>
+	<input type="search"   placeholder="Person Name"  ng-model="searchText" style="margin-left: 10px;margin-bottom: 10px;width:95%">
+				<ul class="list inset" ng-repeat="r in a.peoples.data | filter:searchText " style="padding-bottom:10px">
+					
 					<!-- <li> Find:<input tyzpe = "text" style="margin-bottom:0px;height:35px"  placeholder="Name"  ng-model="searchText"></li>	
-					 --><li ng-repeat="r in a.peoples.data " style="padding-bottom:10px">
+					 --><li style="padding: 13px 60px 10px 9px;">
 						<a stop-event="click"  ng-click="a.peoples.current = r; a.selection='PeopleDetails';"
 						 ng-swipe-right="a.peoples.current = r; a.selection='PeopleDetails';">
 						
 					
 					 	<div>
-							<img src="adminuser.png" style=" height:70px;width:70px">
+							<img src="{{r.profileUrl}}" style=" height:60px;width:60px">
 						</div>
-						<div style="margin-left:10px;top:0%:">
-								<i class="icon-twitter-sign"></i>
-								<i class="icon-linkedin-sign"></i>	
-								<i class="icon-envelope"></i>
+						<div style="margin-left:0px;top:0%:">
+								<i ng-show="r.twitterUsername" class="icon-twitter-sign"></i>
+								<i ng-show="r.linkedinUsername" class="icon-linkedin-sign"></i>	
+								<i ng-show="icon-envelope"></i>
 						</div>
 					
 						<div style="position:absolute;padding-left:80px;top:20px"> 
-							<strong><h4>{{r.userName}}</h4></strong>
-							<div style="margin-left:0px">
-									Software Developer
+							<strong><h4>{{r.firstName}} {{r.lastName}}</h4></strong>
+							<div style="margin-left:0px;width:90%">
+									{{r.title}}
 
 							</div>
 						</div> 	
 						<span class="chevron"></span>
 					</a>
 					</li>
-					<li ng-show="a.peoples.loading" style="text-align: center; display: none;"><i class="icon-spinner icon-spin icon-large"></i></li>
+				</ul>
+				<ul>
+				<li ng-show="a.peoples.loading" style="text-align: center; display: none;"><i class="icon-spinner icon-spin icon-large"></i></li>
 				</ul>
 			</div>	
 
 
 				<div class="tab" ng-switch-when="PeopleDetails">
-
-						<div ng-repeat="r in a.peopleDetails.data;">
-										
+<!-- 
+						<div ng-repeat="r in a.peopleDetails.data">
+								{{r.userId}}
+								{{a.peoples.current.userId}}		
 					<div  ng-if="r.userId == a.peoples.current.userId">	
-
+ -->
 				<div style="padding-left:40%;margin-top:10px;border-radius:10px">
-					<img src="adminuser.png" style="border:1px;" height="50px" width="50px"></img>
+					<img src="{{a.peoples.current.profileUrl}}" style="border:1px;" height="50px" width="50px"></img>
 				</div>	
 				<div style="padding-left:30%;border-radius:10px">
-				  <h3>{{r.lastName}} {{r.firstName}}, {{r.title}}</h3>
+				  <h3>{{a.peoples.current.firstName}} {{a.peoples.current.lastName}}  </h3>
+				</div>
+				<div align="center">
+					{{a.peoples.current.title}}
 				</div>
 				<div style="padding-left:15%;margin-bottom:5px;border-radius:10px">
-				  {{r.about}}
+				  {{a.peoples.current.about}}
 				
 				</div>	
-				   <div style="margin-left:15px;margin-bottom:5px"><strong>CONTACT</strong></div>		
+				   <!-- <div style="margin-left:15px;margin-bottom:5px"><strong>CONTACT</strong></div> -->		<!-- 
 				  <ul class="list inset">
-				  <li><span style="font-size:20px"><i class="icon-twitter"></i>    </span>FOLLOW</li>
-				  <li><span style="font-size:20px"><i class="icon-linkedin"></i>    </span>CONNECT</li>
+				 <li>
+				 <a href="#"> 
+				 	<span style="font-size:20px"><i class="icon-twitter"></i></span>FOLLOW
+				 </a>
+				 </li>
+				  <li>
+				  	<a ng-click="sendInvite()"> 
+				  	<span style="font-size:20px"><i class="icon-linkedin"></i>    </span>CONNECT
+					</a>
+					</li>
 
 				  <li><span style="font-size:20px"><i class="icon-envelope"></i>    </span>EMAIL</li>
 
 				  <li><span style="font-size:20px"><i class="icon-download"></i>    </span>SAVE</li>
 				  </ul>
- 		
- 				<div style="margin-left:15px;margin-bottom:5px"><strong>LINKS</strong></div>		
- 				 
+ 		 -->
+ 				<div style="margin-top:10px;margin-left:15px;margin-bottom:5px;margin-bottom:5px">Links</div>
 				  <ul class="list inset">
-				  <li><span style="font-size:20px"><i class="icon-twitter"></i>    </span> {{r.twitterName}}</li>
-				  <li><span style="font-size:20px"><i class="icon-linkedin"></i>    </span>{{r.linkedinName}}</li>
+				  <li ng-show="a.peoples.current.twitterUsername" style="padding: 10px 30px 10px 15px;">
+				  
+					  	<span style="font-size:15px;color:#0882f0">
+					  	<i class="icon-twitter"></i>
+					   
+					   	<a href="http://twitter.com/{{a.peoples.current.twitterUsername}}">
+				  			 {{a.peoples.current.twitterUsername}}
+						</a></span>
+				</li>
+				  <li ng-show="a.peoples.current.publicProfileUrl"  style="padding: 10px 30px 10px 15px;" >
+				  <span style="font-size:15px;color:#0882f0"><i class="icon-linkedin"></i>    
+				  		<a href="{{a.peoples.current.publicProfileUrl}}">{{a.peoples.current.firstName}} on LinkedIn
+				  </a>
+				  </span>
+				  </li>
 				  </ul>
-				 
+<!-- 				 
 				</div>
 				</div>
-			</div>
+ -->			</div>
 		</div>
 		</div>
 	</div>

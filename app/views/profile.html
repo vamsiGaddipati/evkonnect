@@ -5,8 +5,8 @@
 			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
 		</a>	
 		<h1 class="title">My Profile</h1>
-		<a class="button" ng-click="signOff()">
-			<i class="icon-signout icon-large"></i> {{userName}}
+		<a class="button" ng-click="saveData()">
+			<i class="icon-save"></i> Save
 		</a>
 	</header>
 	<!-- [ "id", "firstName", "lastName","emailAddress", "pictureUrl",
@@ -14,25 +14,48 @@
 
   <div class="content  slide" ng-click="Menu.isOpen() && Menu.toggle()">
 	
-  <div style="padding-left:40%;margin-top:10px;border-radius:10px"><img src="{{a.profile.pictureUrl}}" style="border:1px;" height="80px" width="80px"></img></div>	
+  <div style="padding-left:40%;margin-top:10px;border-radius:10px"><img src="{{a.profile.profileUrl}}" style="border:1px;" height="80px" width="80px"></img></div>	
   <div style="margin-left:15px;margin-bottom:5px"><strong>CONTACT</strong></div>		
- <ul class="list inset">
-  <li>{{a.profile.firstName}}</li>
-  <li>{{a.profile.lastName}} </li>
-  <li>{{a.profile.title}}</li>
-   <li>
-   <div class="input-row">
-      <span style="font-size:25px"><i class="icon-phone"></i>       </span>
-      <input type="text" placeholder="Phone Number" ng-model="phone" value="{{a.profile.phone}}"style="width:80%">
+  <form>
+  <div class="input-group">
+    <div class="input-row">
+      <input type="text"  ng-model="a.profile.firstName">
     </div>
-   </li>
-    <li><span style="font-size:25px"><i class="icon-envelope"></i>    </span>{{a.profile.emailAddress}}</li>
-</ul>
-  <div style="margin-left:15px;margin-bottom:5px;margin-top:25px"><strong>SOCIAL</strong></div>    
- <ul class="list inset">
-  <li><span style="font-size:20px"><i class="icon-twitter"></i>  </span>{{a.profile.twitterName}}</li>
-  <li><span style="font-size:20px"><i class="icon-linkedin"></i>    </span>{{a.profile.linkedinName}}Connected</li>
-  </ul>
+    <div class="input-row">
+    <input type="text"  ng-model="a.profile.lastName">
+    </div>
+    <div class="input-row">
+      <input type="text"  ng-model="a.profile.title">
+    </div>
+     <div class="input-row">
+      &nbsp;&nbsp;&nbsp;<i class="icon-phone"></i>
+      <input type="text"  ng-model="a.profile.phone" style="width:65%">
+    </div>
+     <div class="input-row">
+      &nbsp;&nbsp;&nbsp;<i class="icon-envelope"></i>
+      <input type="text"  ng-model="a.profile.emailAddress" style="width:65%">
+    </div>
+  </div>
+</form>
  
+  <div style="margin-left:15px;margin-bottom:5px;margin-top:25px"><strong>SOCIAL</strong></div>    
+ <form>
+  <div class="input-group">
+    <div class="input-row">
+ 
+     <div class="input-row">
+     &nbsp;&nbsp;&nbsp;<i class="icon-linkedin"></i>
+      
+      <input type="hidden" placeholder="LinkedIn Name" ng-model="a.profile.linkedinUsername" style="width:76%">
+     <input ng-show="a.profile.linkedinUsername" type="text" value="Connected" style="width:76%" readonly>
+    </div>
+     <div class="input-row">
+      &nbsp;&nbsp;&nbsp;<i class="icon-twitter"></i>
+      
+      <input type="text" placeholder="Twitter Name" ng-model="a.profile.twitterUsername" style="width:75%">
+    </div>
+  </div>
+</div>
+ </form>
 </div>
 </div>

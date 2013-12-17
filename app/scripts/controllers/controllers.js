@@ -46,12 +46,12 @@ var tweets = Cache.get('tweets'), a = Cache.get('_a'), c, _limit = 20, $this = t
 			return;
 		}
 		a.tweets.offset += _limit;
-		$this.tweetsQuery();aler
+		$this.tweetsQuery();
 	};
 
 	this.tweetsQuery = function(){
 			a.tweets.loading = true;
-
+			//alert(_limit +"-"+a.tweets.offset);
 			RaModel.query({'dataSource':'TweetFeed'}, {'limit':_limit,'offset':a.tweets.offset, 'params':{'executeCountSql': 'N'}, 'select':['imageurl','tweet'],'sessionId':Session.get().sessionId}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
@@ -436,10 +436,49 @@ app.controller('PeopleCtrl', ['$timeout','$rootScope','$scope','$http' ,'$locati
 		$this.peoplesQuery();
 	};
 
+
+
+	
+	$scope.sendInvite = function(inviteName) {
+	 var url = '/people/~/mailbox',
+	body = {
+		  recipients: {
+			values: [{
+				person: {
+				'_path': '/people/email=sreenivasreddy.patlolla@gmail.com',
+				'first-name':'Sreenivas',
+				'last-name':'Sree'
+				}
+			}]
+			},
+		  subject: 'Invitation to connect.',
+		  body: 'Say yes!',
+				'item-content':{
+					'invitation-request':{
+					'connect-type':'friend'
+				 	
+           		}
+		          }
+		 
+		};
+	  IN.API.Raw()
+		.url(url)
+		.method("POST")
+		.body(JSON.stringify(body))
+		.result(function (result) {
+		console.log("Success");	
+		console.log(result);
+
+		})
+		.error(function (error) {
+		console.log(error);
+		
+	  });
+};
+
 	this.peoplesQuery = function(){
 			a.peoples.loading = true;
-
-			RaModel.query({'dataSource':'EventUsersV'}, {'limit':_limit,'offset':a.peoples.offset, 'params':{'executeCountSql': 'N'}, 'select':['userName','userId'],'sessionId':Session.get().sessionId,'orderBy': '#creationDate# DESC'}, function(result){
+		RaModel.query({'dataSource':'Users'}, {'limit':_limit,'offset':a.peopleDetails.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId,'select':['linkedinUsername','lastName','title','profileUrl','publicProfileUrl','phone','emailAddress','firstName','twitterUsername']}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
@@ -487,7 +526,7 @@ app.controller('PeopleCtrl', ['$timeout','$rootScope','$scope','$http' ,'$locati
 		if (a){
 			$scope.a.pageTitle = 'People';
 			Logger.log(a.userId +  ',' + a.city + ', ' + a.state + ' ' + a.postalCode);
-			$this.peopleDetailsQuery(a.userId);
+		//	$this.peopleDetailsQuery(a.userId);
 			
 		}
 	}, true);
@@ -505,12 +544,12 @@ app.controller('PeopleCtrl', ['$timeout','$rootScope','$scope','$http' ,'$locati
 	/* Start people Details */
 	this.peopleDetailsQueryInternal = function(pid){
 		//alert(pid);
-		RaModel.query({'dataSource':'UserSocialInfoV'}, {'limit':_limit,'offset':a.peopleDetails.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId,'data' :{'userId':pid}}, function(result){
+		RaModel.query({'dataSource':'Users'}, {'limit':_limit,'offset':a.peopleDetails.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId,'select':['linkedinUsername','lastName','phone','emailAddress','firstName','twitterUsername'],'data' :{'userId':pid}}, function(result){
 				if (result.$error) {
 					Logger.showAlert(result.errorMessage, result.errorTitle);
 				} else {
 					if (result.data.length > 0) {
-
+							//console.log(result.data);
 						a.peopleDetails.data.push.apply(a.peopleDetails.data, result.data);
 						a.peopleDetails.current = result.data[0];
 						
@@ -611,7 +650,7 @@ app.controller('SponsersCtrl', ['$timeout','$rootScope','$scope','$http' ,'$loca
 	this.sponsersQuery = function(){
 			a.sponsers.loading = true;
 
-			RaModel.query({'dataSource':'EventHolders'}, {'limit':_limit,'offset':a.sponsers.offset, 'params':{'executeCountSql': 'N'},'data':{'eventId':1,'holderType':'SPONSOR'}, 'select':['urlText','holderName','holderAbout2'],'sessionId':Session.get().sessionId,'orderBy': '#holderName#'}, function(result){
+			RaModel.query({'dataSource':'EventHoldersV'}, {'limit':_limit,'offset':a.sponsers.offset, 'params':{'executeCountSql': 'N'},'data':{'eventId':1,'holderType':'SPONSOR'}, 'select':['logoUrl','holderName','holderabout2','website','linkedin','twitter'],'sessionId':Session.get().sessionId,'orderBy': '#holderName#'}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
@@ -684,6 +723,7 @@ app.controller('SponsersCtrl', ['$timeout','$rootScope','$scope','$http' ,'$loca
 
 app.controller('EventInfoCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
 	var currEvent = Cache.get('currEvent'), a = Cache.get('_a'), c, _limit = 20, $this = this;
+	$scope.userName = "";
 	this.initScope = function() {
 		a.data = currEvent;
 		a.selection = 'events';
@@ -694,6 +734,7 @@ app.controller('EventInfoCtrl', ['$scope', '$location', 'alarmService','Logger',
 		a.events.hasMore = false;
 		a.events.loading = false;
 		$scope.a = a;
+
 		$this.eventsQuery();
 	};
 	
@@ -744,7 +785,7 @@ app.controller('MyEventCtrl', ['$scope', '$location', 'alarmService','Logger','R
 	this.initScope = function() {
 		a.data = currEvent;
 		a.selection = 'events';
-		//$scope.displayName = Session.get().displayName;
+		$scope.displayName = Session.get().displayName;
 		a.events = {};
 		a.events.data = [];
 		a.events.offset = 0;
@@ -797,23 +838,32 @@ app.controller('MyEventCtrl', ['$scope', '$location', 'alarmService','Logger','R
 
 
 app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
-	var currSchedule = Cache.get('currSchedule'), a = Cache.get('_a'), c, _limit = 20, $this = this;
+	var currSchedule = Cache.get('currSchedule'), a = Cache.get('_a'), c, _limit = 40, $this = this;
+	$scope.day1 = "Y";
+	$scope.day2 = "N";
+	$scope.day3 = "N";
+	$scope.isScheduled = false;
 	this.initScope = function() {
 		a.data = currSchedule;
-		a.selection = 'schedule';
+		a.selection = 'Schedule';
 		//$scope.displayName = Session.get().displayName;
 		a.schedule = {};
+
 		a.schedule.data = [];
+		a.userSchedule = {};
+		a.userSchedule.data = [];
+		a.userSchedule.isSelected = false;
 		a.schedule.offset = 0;
 		a.schedule.initialized = false;
 		a.schedule.hasMore = false;
 		a.schedule.loading = false;
 		$scope.a = a;
-		$this.scheduleQuery();
+		$this.scheduleQuery('18-12-2013');
+		$this.userScheduleQuery(Session.get().userId,'18-12-2013');
 	};
 	
 	this.init = function(){
-		a = {'pageTitle':'MyEvents'};
+		a = {'pageTitle':'Schedule'};
 	};
   	
 	$scope.joinEvent = function() {
@@ -829,9 +879,109 @@ app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger'
 		$this.scheduleQuery();
 	};
 
-	this.scheduleQuery = function(){
+	$scope.day1Events = function() {
+		a.schedule.data = [];
+		$this.scheduleQuery('18-12-2013');
+		a.userSchedule.data = [];
+		$this.userScheduleQuery(Session.get().userId,'18-12-2013');
+	}
+
+
+	$scope.day2Events = function() {
+		a.schedule.data = [];
+		$this.scheduleQuery('19-12-2013');
+		a.userSchedule.data = [];
+		$this.userScheduleQuery(Session.get().userId,'19-12-2013');
+	}
+
+	$scope.day3Events = function() {
+		a.schedule.data = [];
+		$this.scheduleQuery('20-12-2013');
+		a.userSchedule.data = [];
+		$this.userScheduleQuery(Session.get().userId,'20-12-2013');
+	}
+
+
+$scope.$watch('a.selection', function(newValue, oldValue){
+		Logger.log(oldValue + '->' + newValue);
+		//alert(newValue);
+		/*
+		a.peoples.initialized = true;
+		*/if (newValue === 'Schedule') {
+			a.pageTitle = 'Schedule';
+			
+			//$this.peoplesQuery();
+			if (a.peoples.initialized) {
+				return;
+			}
+			
+		} else if (newValue === 'ScheduleDetails') {
+			a.pageTitle = 'Schedule Details';
+		} 
+	});
+
+	$scope.scheduleMyEvent = function(isSelected,eventId) {
+		console.log("Selected:"+isSelected+" id:"+eventId);
+		var operation = "insert";
+		if(!isSelected) {
+			operation = "delete";
+		}
+			RaModel.save({'dataSource':'UserSchedule','operation':operation}, { "sessionId":Session.get().sessionId,
+		'eventScheduleId':eventId,
+	  'userId':Session.get().userId
+	 	}, function(result){
+			//alert(result+"asdfasdfasd");
+			console.log(result);
+			var newrow = {"userId":result.userId,"eventScheduleId":result.eventScheduleId};
+			if(operation === "insert") {
+				a.userSchedule.data.push(newrow);
+			} else {
+				$this.removeByValue(a.userSchedule.data,newrow);
+
+			}
+			//$location.path("/myevents");		
+			Logger.showAlert("Added to your schedule!!!","Update");
+		});
+
+	}
+
+
+	this.removeByValue = function (arr, val) {
+    for(var i=0; i<arr.length; i++) {
+        if(arr[i] == val) {
+            arr.splice(i, 1);
+            break;
+        }
+    }
+	}
+	//hardcoded values of limit and offset.
+	this.userScheduleQuery = function(userId,startDateString){
 			a.schedule.loading = true;	 
-			RaModel.query({'dataSource':'EventSchedule'}, {'limit':_limit,'offset':a.schedule.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'data':{eventId:1},'select': ['startTime','endTime','name','venue']}, function(result){
+			RaModel.query({'dataSource':'UserSchedule'}, {'limit':40,'offset':0, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'data':{'userId':userId,'startDateString':startDateString},'select': ['userId','eventScheduleId']}, function(result){
+					if (result.$error) {
+						Logger.showAlert(result.errorMessage, result.errorTitle);
+					} else {
+						if (result.data.length > 0) {
+							a.userSchedule.data.push.apply(a.userSchedule.data, result.data);
+							/*if (result.data.length < _limit) {
+								a.schedule.hasMore = false;
+							} else {
+								a.schedule.hasMore = true;
+							}*/
+						
+						}/* else {
+							a.schedule.hasMore = false;
+						}
+*/						Cache.put('_a', a);
+					}
+					a.schedule.loading = false;
+				}
+			);
+	   
+	};
+	this.scheduleQuery = function(startTimeParam){
+			a.schedule.loading = true;	 
+			RaModel.query({'dataSource':'EventSchedule'}, {'limit':_limit,'offset':a.schedule.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'data':{'startDateString':startTimeParam},'select': ['eventScheduleId','startTime','endTimeString','startTimeString','endTime','name','about','venue'],'orderBy': '#startTime#,#endTime#'}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
@@ -888,11 +1038,11 @@ app.controller('ProfileCtrl', ['$scope', '$location','$rootScope', 'alarmService
 		a.profile.loading = false;
 		$scope.a = a;
 		//alert(Session.get().userId);
-		if($rootScope.userprofile) {
+/*		if($rootScope.userprofile) {
 			a.profile = $rootScope.userprofile;
 		} else {
-			$this.profileQuery();
-		}
+*/			$this.profileQuery();
+		//}
 	};
 	
 	this.init = function(){
@@ -904,9 +1054,10 @@ app.controller('ProfileCtrl', ['$scope', '$location','$rootScope', 'alarmService
 	};
 
 	this.profileQuery = function(){
+		
 			a.profile.loading = true;	 
 			//alert(Session.get().userId+"******");
-			RaModel.query({'dataSource':'UserSocialInfoV'}, {'limit':_limit,'offset':a.profile.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'select': ['firstName','lastName','title','emailAddress','phone','linkedinName','twitterName'],'data' :{'userId':Session.get().userId},'orderBy': '#creationDate# DESC'}, function(result){
+		RaModel.query({'dataSource':'Users'}, {'limit':_limit,'offset':a.profile.offset, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'select': ['firstName','profileUrl','publicProfileUrl','lastName','title','emailAddress','phone','linkedinUsername','twitterUsername'],'data' :{'userId':Session.get().userId},'orderBy': '#creationDate# DESC'}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
@@ -925,13 +1076,33 @@ app.controller('ProfileCtrl', ['$scope', '$location','$rootScope', 'alarmService
 	   
 	};
 
-	
+	$scope.saveData = function() {
+		RaModel.save({'dataSource':'Users','operation':'update'}, { "sessionId":Session.get().sessionId,
+	  'firstName':a.profile.firstName,
+	  'lastName':  a.profile.lastName,
+	  "title":a.profile.title,                      
+	  "phone":a.profile.phone,  
+	       "publicProfileUrl":a.profile.publicProfileUrl,  
+	       "profileUrl":a.profile.profileUrl,  
+      "emailAddress":a.profile.emailAddress,
+      "linkedinUsername":a.profile.linkedinUsername,
+	  'twitterUsername':a.profile.twitterUsername,
+	  'userId':Session.get().userId,
+	  'lastUpdateDate': new Date()
+	  
+	}, function(result){
+		//alert(result);
+		console.log(result);
+		Logger.showAlert("Profile Saved !!!","Update");
+	});
+
+	};
 	$scope.signOff = function() {
 		Session.signOff();
 	};
 
 	if (a === undefined) {
-		alert("**");
+		//alert("**");
 		this.init();
 		Cache.put('_a', a);
 	}
@@ -969,7 +1140,7 @@ app.controller('LoginCtrl', ['$scope', '$location', 'Session', 'Menu', function 
 			var dn = userprofile.firstName+""+userprofile.lastName;
 			    	var ea = userprofile.emailAddress;
 			    	var callback = function(response,status) {
-			    			alert(status);
+			    			//alert(status);
 			    			console.log("response:"+response);
 			    			$location.path("/main");		
 			    	}

@@ -3,10 +3,14 @@
 	<h1 class="title">
 		<img src="logo.png" height="35" width="80">
 		Event Conference</h1>
+
 </header>
 <div class="content">   
 	<space></space>	
-	<div class="input-group inset">
+	<!-- <div style="background-image:url('/home/srikanth/Downloads/2.jpg')">
+
+	</div>
+ -->	<div class="input-group inset">
 		<div class="input-row">
 			<label>Username</label>
 			<input type="text" placeholder="username@domain.com" ng-model="username">
@@ -17,10 +21,23 @@
 		</div>
 	</div>
 	<a class="button-main button-block" ng-click="signIn()">Sign In</a>
-	<a class="button-main button-block"><script type="in/Login"></script></a>
-	<a class="button-main button-block button-negative" ng-click="signIn()">
-		<i class="icon-google-plus-sign"></i> Log in with Google</a>
-	<a class="button-main button-block button-linkedin" ng-click="signIn()"><i class="icon-linkedin-sign"></i> Log in with Linkedin</a>
-	<a class="button-main button-block button-twitter" ng-click="signIn()"><i class="icon-twitter-sign"></i> Log in with Twitter</a>
+	<div align="center">
+	<script type="in/Login" data-label="action">
+</script>
+	<span id="signinButton">
+	  	<span
+	    class="g-signin"
+	    data-callback="signinCallback"
+	    data-approvalprompt="force"
+	    data-clientid="58357025836-9vi72nbuo0c3phif8n5n7oqp35l15k4s.apps.googleusercontent.com"
+	    data-cookiepolicy="single_host_origin"
+	    data-requestvisibleactions="http://schemas.google.com/AddActivity"
+	    data-scope="https://www.googleapis.com/auth/plus.login  https://www.googleapis.com/auth/plus.profile.emails.read">
+	  	</span>
+	</span>
+</div>
+	</div>
 </div>
 </div>
+<script type="text/javascript">
+</script>

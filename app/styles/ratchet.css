@@ -1241,7 +1241,7 @@ select {
   color: #777;
   text-shadow: 0 1px #fff;
   text-transform: uppercase;
-  content: "Off";
+  content: "No";
 }
 
 /* Sliding handle */
@@ -1263,11 +1263,11 @@ select {
 
 /* Active state for toggle */
 .toggle.active {
-  background-color: #1c1c1c;
-  background-image: -webkit-linear-gradient(top, #535353 0, #1c1c1c 100%);
-  background-image: linear-gradient(to bottom, #535353 0, #1c1c1c 100%);
-  border: 1px solid #535353;
-  box-shadow: inset 0 0 15px rgba(255, 255, 255, .25);
+background-color: #19a8e4;
+background-image: -webkit-linear-gradient(top, #088cd4 0, #19a8e4 100%);
+background-image: linear-gradient(to bottom, #088cd4 0, #19a8e4 100%);
+border: 1px solid #096c9d;
+box-shadow: inset 0 0 15px rgba(255, 255, 255, .25);
 }
 
 /* Active state for toggle handle */
@@ -1283,7 +1283,7 @@ select {
   left: 15px;
   color: #fff;
   text-shadow: 0 -1px rgba(0, 0, 0, 0.25);
-  content: "On";
+  content: "Yes";
 }/* Push styles (to be used with push.js)
 -------------------------------------------------- */
 
@@ -1339,4 +1339,8 @@ select {
   right: 30px;
   color:#fff; 
     
+}
+
+.pushdown {
+  padding-bottom: 45px;
 }

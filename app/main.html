@@ -28,6 +28,16 @@
 					</a>
 				</li>
 			</ul>
+			<nav class="bar-tab">
+  <ul class="tab-inner">
+    <li class="tab-item">
+      <a ng-click="logoutLinkedIn()" stop-event="click" style="width:0%;padding-left: 30px">
+        <i class="icon-cog"></i>Logout
+        
+      </a>
+    </li>
+</ul>
+</nav>
 		</div>
 	</div>
 	<div id="popover" ng-class="Logger.show?'visible':''" class="popover">
@@ -48,7 +58,6 @@
 	    <li>{{Logger.message}}</li>
 	  </ul>
 	</div>	
-	<script src="cordova.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/jquery-2.0.2.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/fastclick.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/angular.min.js" type="text/javascript" charset="utf-8"></script>
@@ -56,21 +65,28 @@
 	<script src="lib/angular-resource.min.js" type="text/javascript" charset="utf-8"></script>
 	<!-- build:js scripts/scripts.js -->
 	<script src="scripts/directives/ng-infinite-scroll.js" type="text/javascript" charset="utf-8"></script>
+
 	<script src="scripts/app.js" type="text/javascript" charset="utf-8"></script>
 	<script src="scripts/controllers/demo.js" type="text/javascript" charset="utf-8"></script>
 	<script src="scripts/controllers/index.js" type="text/javascript" charset="utf-8"></script>
 	<script src="scripts/controllers/controllers.js" type="text/javascript" charset="utf-8"></script>
-	<script src="scripts/controllers/account.js" type="text/javascript" charset="utf-8"></script>
-	<script src="scripts/controllers/chart.js" type="text/javascript" charset="utf-8"></script>
 	<!-- endbuild -->
-	<script src="lib/fc/FusionCharts.js" type="text/javascript" charset="utf-8"></script>
 		<script src="scripts/controllers/linkedin.js"></script>
+	<script src="scripts/controllers/google.js"></script>
 	<script type="text/javascript" src="http://platform.linkedin.com/in.js">
 	//here goes the api key, and the callback function
 	api_key:75qa08oco86hbq
-	onLoad: onLinkedInLoad
+	onLoad:onLinkedInLoad
 	authorize: true
 	</script>
 
+	<script type="text/javascript">
+      (function() {
+       var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+       po.src = 'https://apis.google.com/js/client:plusone.js';
+       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+     })();
+    </script>
+     	
 </body>
 </html>

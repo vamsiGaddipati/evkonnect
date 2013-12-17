@@ -1,37 +1,116 @@
 <div class="page" ng-class="Menu.isOpen()?'open':''">
 	<header class="bar-title">
-		<a class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 25px;">
+		<a ng-show="a.selection==='Schedule'" class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 25px;">
 			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
 			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
 		</a>
 
+
+	<a ng-if="a.selection==='ScheduleDetails'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='Schedule';" stop-event="click">
+			<i class="icon-arrow-left icon-large"></i>
+		</a>
+
 		<h1 class="title">
 
-			<i ng-show="a.loading || a.schedule.loading || a.sponserDetails.loading " class="icon-spinner icon-spin icon-large" style="display: none;"></i> 	Schedule</h1>
-		<a class="button" ng-click="signOff()">
+			<i ng-show="a.loading || a.schedule.loading || a.sponserDetails.loading " class="icon-spinner icon-spin icon-large" style="display: none;"></i> 	{{a.pageTitle}}</h1>
+		<a ng-show="a.selection=='Schedule'" class="button" ng-click="signOff()">
 			<i class="icon-signout icon-large"></i> {{userName}}
 		</a>
 	</header>
-	<div class="content  slide" ng-click="Menu.isOpen() && Menu.toggle()">
-		<div class="tab" infinite-scroll="getMoreSchedules()" infinite-scroll-distance="15">
+	<div class="content  slide" ng-click="Menu.isOpen() && Menu.toggle()" ng-switch on="a.selection">
 			
+
+		<div class="tab"  ng-switch-when="Schedule" infinite-scroll="getMoreSchedules()" infinite-scroll-distance="15">
+
+<nav class="bar-standard">
+  <ul class="segmented-controller">
+    <li ng-class="day1=='Y'?'active':''">
+      <a stop-event="click" ng-click="day1='Y';day2='N';day3='N';day1Events()" ng-class="active">18-Dec</a>
+    </li>
+    <li ng-class="day2=='Y'?'active':''" >
+      <a stop-event="click" ng-click="day2='Y';day3='N';day1='N';day2Events()" >19-Dec</a>
+    </li>
+    <li ng-class="day3=='Y'?'active':''">
+      <a stop-event="click"  ng-click="day3='Y';day2='N';day1='N';day3Events()">20-Dec</a>
+    </li>
+  </ul>
+</nav>			
 		<ul class="list" >
 
-			<li style="border-top:0px;color:#FFF;padding-top:10px;background-color: #41b7d8"><div style="margin-left:30%"> <h3>Wednesday, December 18</h3></div></li></ul>
+			<li style="border-top:0px;color:#FFF;padding-top:0px;padding-bottom:40px;"><div style="margin-left:30%"> </div></li></ul>
+	<input type="search"   placeholder="Event Name"  ng-model="searchText" style="margin-left: 10px;margin-bottom: 0px;width:95%">
+					
+<any ng-repeat="r in a.schedule.data | filter:searchText">
 			
+			<ul class="list inset" ng-click="a.schedule.current = r; a.selection='ScheduleDetails';"
+						 ng-swipe-right="a.schedule.current = r; a.selection='ScheduleDetails';">
+			<!-- <any ng-if="$index == 0"> -->
+				<li class="list-divider">
+					{{r.startTimeString}}  
+					<any ng-repeat="us in a.userSchedule.data ">
+					<spn ng-if="us.eventScheduleId == r.eventScheduleId;" align="center;">
+					{{$parent.isScheduled=true}}
+						<font color="color:blue"><i class="icon-calendar"></i></font></span>
+					</any>	
+				</li>
+		  <!--  </any> -->
+		   <!-- <any ng-if="$index > 0">
+				<li class="list-divider" style="border-radius: 0px;border-top-width:1px;border-top-width:1px">
+					{{r.startTimeString}}
+				</li>
+		   </any> -->
 
-			<ul class="list inset">
-			
-			<any ng-repeat="r in a.schedule.data;">
-			<li class="list-divider">
-					{{r.startTime |  date:'HH:mm'}}
+			<li style="padding: 5px 20px 40px 10px" >
+					
+				<strong>{{r.name}}</strong>
+				<span style="color:gray;font-size:15px;position: absolute;top: 70%;right:10px"><i class="icon-map-marker"></i> <small>{{r.venue}}</small>
+						</span>
+						<span style="color:gray;font-size:15px;position: absolute;top:70%;left:10px"><small>Ends at {{r.endTimeString}}</small>
+						</span>
+				
 			</li>
-			<li>
-				<h3>{{r.name}}</h3>
-						<span style="color:gray;font-size:15px;position: absolute;top: 70%;right:10px"><i class="icon-map-marker"></i> <small>{{r.venue}}</small></span>
-			</li>
-					</any>
-					<li ng-show="a.schedule.loading" style="text-align: center; display: none;"><i class="icon-spinner icon-spin icon-large"></i></li>
+					
 		</ul>
+				</any>
+
+		<ul>
+			<li ng-show="a.schedule.loading" style="text-align: center; display: none;"><i class="icon-spinner icon-spin icon-large"></i></li>
+		</ul>
+		</div>
+		<div class="tab"  ng-switch-when="ScheduleDetails">
+			<ul class="list inset">
+				<li class="">
+					<div>
+					<strong>{{a.schedule.current.name}}</strong>
+
+					</div>
+					<div style="margin-bottom:10px"></div>
+						<div>
+							<i class="icon-time"></i> {{a.schedule.current.startTimeString}} - {{a.schedule.current.endTimeString}} 
+						</div>
+						<div>
+							<font size="4px"><i class="icon-map-marker"></i></font>   {{a.schedule.current.venue}}
+						</div>
+						
+
+						
+					</li></ul>
+					<ul class="list inset"><li>
+
+					<input type="hidden" ng-model="$parent.isScheduled" />
+						I want to attend
+					    <div class="toggle" ng-class='$parent.isScheduled?"active":""' ng-click="$parent.isScheduled=!$parent.isScheduled;scheduleMyEvent($parent.isScheduled,a.schedule.current.eventScheduleId)" ng-swipe-right="$parent.isScheduled=true;" ng-swipe-left="$parent.isScheduled=false;">
+					      <div class="toggle-handle"></div>
+					    </div>
+					
+					</li>
+				</ul>
+				<div style="margin-left:15px;margin-bottom:5px"><strong>About</strong></div>	
+						<ul class="list inset">
+							<li>
+				
+						{{r.schedule.current.about}}
+					</li>
+				</ul>
 		</div>
 </div>

@@ -58,7 +58,34 @@ var PhoneGap = {
 
 PhoneGap.initialize();
 
+/*
+var LinkedInAPI = {
+	
+	init: function() {
+	var IN = window.IN;
+		this.registerEvents();
+	},
+	registerEvents: function() {
+		alert(IN);
+		this.onLogin();
+		this.onLogout();
+	},
 
+	onLogin: function() {
+		//	alert('*******');
+		IN.Event.on(IN, "auth", function() {
+			onLinkedInLogin();
+		});
+	},
+	onLogout:function() {
+		IN.Event.on(IN, "logout", function() {
+			onLinkedInLogout();
+		});
+	}
+
+};
+
+LinkedInAPI.init();*/
 var app = angular.module('SPAApp', ['ngMobile', 'ngResource', 'infinite-scroll']);
 app.config(['$provide', function ($provide) {
 	$provide.decorator('$sniffer', ['$delegate', function ($delegate) {
@@ -112,8 +139,8 @@ console.log(angular.toJson(next));
 
 app.config(function ($routeProvider) {
 	$routeProvider
-	.when('/', {
-		templateUrl: 'views/neewsfeed.html',
+	.when('/newsfeed', {
+		templateUrl: 'views/twitterfeed.html',
 		controller: 'MainCtrl'
 	})
 	.when('/sponsers', {
@@ -132,6 +159,10 @@ app.config(function ($routeProvider) {
 	.when('/profile', {
 		templateUrl: 'views/profile.html',
 		controller: 'ProfileCtrl'
+	}).when('/', {
+		templateUrl: 'views/myevents.html',
+		controller: 'MyEventCtrl'
+		
 	})
 	.when('/myevents', {
 		templateUrl: 'views/myevents.html',
@@ -284,13 +315,15 @@ app.service('Session', ['RaModel', '$location','$rootScope', 'Logger', function 
 	this.signIn = function (username, pwd, callback) {
 		RaModel.save({'dataSource':'signin'}, {'username': username, 'password': pwd},
 		function(result) {
+			//alert("asdfasd");
 			Logger.log(angular.toJson(result));
+
 			if (result.$error) {
 				Logger.showAlert(result.errorMessage, result.errorTitle);
 			} else {
 				$location.path('/');
 				session = result;
-				
+				localStorage.setItem('session', angular.toJson(session));
 				callback();
 			}
 		});
@@ -301,7 +334,9 @@ app.service('Session', ['RaModel', '$location','$rootScope', 'Logger', function 
 				IN.User.logout();
 				delete $rootScope.userprofile;
 				$rootScope.loggedUser = false;
+				//$location.reload();
 				$this.showLogin();
+				$location.reload(true);
 			 
 			} else {
 			RaModel.save({'dataSource':'signoff'}, {'sessionId': session.sessionId},
@@ -425,7 +460,7 @@ app.service('Menu', ['$location', function ($location) {
 	};
 
 	var isOpen = false, subPage = false, active,
-	items = [{code:'/', icon:'icon-rss', name:'News Feeds'},{code:'/connections', icon:'icon-user', name:'Connections'},{code:'/profile', icon:'icon-edit', name:'Edit Profile'},{code:'/myevents', icon:'icon-bullseye', name:'My Events'},{code:'map', icon:'icon-map-marker', name:'TES Summit 2013',isEvent:'Y'},{code:'/people', icon:'icon-group', name:'People'},{code:'/schedule', icon:'icon-calendar', name:'Schedule'},{code:'/eventinfo', icon:'icon-info-sign', name:'Event Info'},{code:'/sponsers', icon:'icon-anchor', name:'Sponsors'}];
+	items = [{code:'/profile', icon:'icon-edit', name:'Edit Profile'},{code:'/myevents', icon:'icon-map-marker', name:'TES Summit 2013'},{code:'/people', icon:'icon-group', name:'People'},{code:'/schedule', icon:'icon-calendar', name:'Schedule'},{code:'/eventinfo', icon:'icon-info-sign', name:'Event Info'},{code:'/sponsers', icon:'icon-anchor', name:'Sponsors'},{code:'/newsfeed', icon:'icon-rss', name:'Twitter Feed'}];
 
 	this.getItem = function(code){
 		var len = items.length;
@@ -447,9 +482,11 @@ app.factory('QCalls', ['$http','$q',function($http,$q) {
 		 	//alert(aurl);
 		var httpcall =  $http({ url: aurl, method: "GET"}).
 						success(function(data, status, headers, config) {
+							console.log(data);
 							callback(data,"Success");
 				    	}).
 				  		error(function(data, status, headers, config) {
+				  			console.log(data);
 				  			callback(data,"Error");
 				   		});
           return $q.all([httpcall]);

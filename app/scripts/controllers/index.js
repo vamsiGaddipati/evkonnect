@@ -1,16 +1,18 @@
 'use strict';
 var app = angular.module('SPAApp');
-app.controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'QCalls','Session', 'Menu', 'Logger', 'Demo', function ($scope, $location,$rootScope, QCalls,Session, Menu, Logger, Demo) {
+app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCalls','Session', 'Menu', 'Logger', 'Demo', function ($scope, $location,$rootScope,RaModel,QCalls,Session, Menu, Logger, Demo) {
 	$scope.Menu = Menu;
 	$scope.Logger = Logger;
 	Demo.setScope($scope);
 	Demo.indexScope = $scope;
 	$scope.Demo = Demo;
+	var $this = this;
 	function init() {
 		$scope.menuItems = Menu.getItems();
 		Menu.clear();
+		//$this.getLinkedInData();
 	}
-	init();
+	
 	$scope.menuItemClick = function(menuItem) {
 		Menu.menuItemClick(menuItem);
 	};
@@ -35,16 +37,106 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'QCalls','Sess
 	};
 
 
+	this.insertNewUser = function(userId) {
+		var data = $scope.personDetails;
+	//	alert(data.firstName+","+data.lastName+","+data.title+","+data.phoneNumbers);
+	//	alert(data.publicProfileUrl+","+data.profileUrl);
+		RaModel.save({'dataSource':'Users','operation':'insert'}, { "sessionId":Session.get().sessionId,
+	  'firstName':data.firstName,
+	  'lastName':  data.lastName,
+	  "title":data.title,                      
+	  "phone":data.phoneNumbers,       
+      "emailAddress":data.emailAddress,
+      "profileUrl":data.profileUrl,
+      "publicProfileUrl":data.publicProfileUrl,
+
+      "linkedinUsername":data.linkedinUsername,
+	  'twitterUsername':data.twitterUsername,
+	  'userId':userId,
+
+	 	}, function(result){
+			//alert(result+"asdfasdfasd");
+			console.log(result);
+			$location.path("/myevents");		
+			//Logger.showAlert("Profile Saved !!!","Update");
+		});
+
+	}
+	$scope.googleLogin = function(obj) {
+
+		console.log(obj);
+   //from the filtered results, should always be defined.
+    var email = obj.emails[0].value;
+    var displayName = obj.displayName;
+    var firstName = obj.name.givenName;
+    var lastName = obj.name.familyName;
+    var title = obj.occupation;
+    var pictureUrl = obj.image.url;
+    var publicProfileUrl = obj.url;
+    console.log("Getting here.....");
+	/*var request = $.ajax({
+	    url: "http://tevents.rapapp.com/h/customlogin",
+	    type: "GET",
+	    data: {'_ea':email, '_dn':displayName,'firstName':firstName,'lastName':lastName,'title':title,'pictureUrl':pictureUrl,'publicProfileUrl':publicProfileUrl},
+	    dataType: "html"
+	});
+	*/var callback = function(response) {
+		
+	    			if(response.indexOf("@_") > -1) {
+			    				var responsenative = response.substring(0,response.indexOf("@_"));
+			    				var responjson = angular.fromJson(responsenative);
+			    				Session.set("sessionId",responjson.sessionId);
+			    				Session.set("userId",responjson.userId);
+			    				Session.set("displayName",firstName+" "+lastName);
+			    				
+			    				Session.store();
+			    				alert(Session.get().displayName);
+			    				//alert("stored");
+			    				if(responjson.userCount == 0) {
+				    				console.log("********** new user*************8");
+				    				var personDetails = {};
+				    				personDetails.firstName = firstName;
+				    				personDetails.lastName = lastName;
+				    				personDetails.title = title;
+				    				personDetails.profileUrl = pictureUrl;
+				    				personDetails.publicProfileUrl = publicProfileUrl;
+				    				personDetails.emailAddress = email;
+				    				console.log("google:"+personDetails);
+				    				$scope.personDetails = personDetails;
+				    				$this.insertNewUser(responjson.userId);
+			    				} else {
+			    					console.log("********** existing*************");
+			    					$location.path("/myevents");		
+			    				}
+			    			} else {
+			    				console.log("Error:"+response);
+			    				Logger.showAlert("Unable to create/access user information!"+response,"Error");
+			    			}
+			    
+	};
+
+		    	//alert(phoneNumbers)
+			    	//var requrl = "pictureUrl="+pictureUrl+"&publicProfileUrl="+publicProfileUrl
+			    	            //  +"&firstName="+firstName+"&lastName="+lastName     
+			    	             // +"&phoneNumbers="+phoneNumbers;
+			    	QCalls.waitForAllQCalls(homeBaseUrl+'h/customlogin?_dn='+displayName+"&_ea="+email,callback);
+	
+
+	}
+	$scope.personDetails = {};
 	$scope.getLinkedInData = function() {
 		if(!$scope.hasOwnProperty("userprofile")){
 			//alert("********34343");
 			IN.API.Profile("me").fields(
-					[ "id", "firstName", "lastName","emailAddress", "pictureUrl",
-							"publicProfileUrl" ]).result(function(result) {
+					[ "id","firstName", "lastName","emailAddress", "pictureUrl",
+							"phoneNumbers","twitterAccounts","headline","publicProfileUrl" ]).result(function(result) {
 				// set the model
 				$rootScope.$apply(function() {
 					var userprofile =result.values[0]
 					$rootScope.userprofile = userprofile;
+					console.log(userprofile.phoneNumbers);
+					console.log(userprofile.headline);
+					
 					$rootScope.loggedUser = true;
 					//alert("**email"+userprofile.emh/customlogin?lAddress+"*******");
 			    	//go to main
@@ -55,30 +147,59 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'QCalls','Sess
 			    	$rootScope.userId = "";
 			    	var dn = userprofile.firstName+""+userprofile.lastName;
 			    	var ea = userprofile.emailAddress;
+			    	var personDetails = {};
+			    				personDetails.firstName = userprofile.firstName;
+			    				personDetails.lastName = userprofile.lastName;
+			    				personDetails.title = userprofile.headline;
+			    				personDetails.profileUrl = userprofile.pictureUrl;
+			    				personDetails.publicProfileUrl = userprofile.publicProfileUrl;
+			    				personDetails.emailAddress = userprofile.emailAddress;
+			    				personDetails.linkedinUsername = userprofile.publicProfileUrl;
+			    				personDetails.twitterUsername = userprofile.twitterAccounts.values[0].providerAccountName;
+			    				
+			    				console.log(personDetails.twitterUsername)
+			    					$scope.personDetails = personDetails;
+			    					console.log("linkedin:"+personDetails);
 			    	var callback = function(response,status, $rootScope,userprofile) {
-			    			//alert(status);
 			    			console.log("response:"+response);
 			    			if(response.indexOf("@_") > -1) {
 			    				var responsenative = response.substring(0,response.indexOf("@_"));
-			    			//	alert(responsenative);
-			    			var responjson = angular.fromJson(responsenative);
-			    			//alert(responjson.sessionId);
-			    		//	alert(responjson.userId);
-			    			
+			    				var responjson = angular.fromJson(responsenative);
 			    				Session.set("sessionId",responjson.sessionId);
 			    				Session.set("userId",responjson.userId);
 			    				Session.set("displayName",dn);
-			    				//alert(Session.get().sessionId);
 			    				Session.store();
-			    				//userprofile.id = responjson.userId;
-			    				//alert(userprofile.firstName);
-								$location.path("/profile");		
+			    				$scope.personDetails = personDetails;
+
+			    				if(responjson.userCount == 0) {
+				    				console.log("********** new user*************8");
+								$this.insertNewUser(responjson.userId);
+								} else {
+									console.log("********** existing*************");
+			    					$location.path("/myevents");		
+			    					
+								}
+			    				
+			    				
 			    			} else {
 			    				console.log("Error:"+response);
-			    				Logger.showError("Unable to create/access user information!","Error");
+			    				Logger.showAlert("Unable to create/access user information!"+response,"Error");
 			    			}
 			    			
 			    	}
+			    	var phoneNumbers = "";
+			    	if(userprofile.phoneNumbers) {
+			    		if(userprofile.phoneNumbers.values) {
+			    			for(var counter = 0; counter < userprofile.phoneNumbers.values.length;counter++) {
+			    				phoneNumbers += userprofile.phoneNumbers.values[counter].phoneNumber+","; //tracking only one phone number
+
+			    		 }
+			    		}
+			    	}
+			    	//alert(phoneNumbers)
+			    	var requrl = "pictureUrl="+userprofile.pictureUrl+"&publicProfileUrl="+userprofile.publicProfileUrl
+			    	              +"&firstName="+userprofile.firstName+"&lastName="+userprofile.lastName     
+			    	              +"&phoneNumbers="+phoneNumbers;
 			    	QCalls.waitForAllQCalls(homeBaseUrl+'h/customlogin?_dn='+dn+"&_ea="+ea,callback);
 					
 				});
@@ -88,12 +209,13 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope', 'QCalls','Sess
 			});
 		}
 	};
+
+
+
+	init();
   //logout and go to login screen
 	$scope.logoutLinkedIn = function() {
     //retrieve values from LinkedIn
-		IN.User.logout();
-		delete $rootScope.userprofile;
-		$rootScope.loggedUser = false;
-		$location.path("/login");
+		Session.signOff();
 	};  
 }]);
