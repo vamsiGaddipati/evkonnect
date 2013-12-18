@@ -1,11 +1,8 @@
 'use strict';
 var app = angular.module('SPAApp');
-app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCalls','Session', 'Menu', 'Logger', 'Demo', function ($scope, $location,$rootScope,RaModel,QCalls,Session, Menu, Logger, Demo) {
+app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCalls','Session', 'Menu', 'Logger', function ($scope, $location,$rootScope,RaModel,QCalls,Session, Menu, Logger) {
 	$scope.Menu = Menu;
 	$scope.Logger = Logger;
-	Demo.setScope($scope);
-	Demo.indexScope = $scope;
-	$scope.Demo = Demo;
 	var $this = this;
 	$scope.loading = false;
 	function init() {

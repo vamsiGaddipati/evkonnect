@@ -1,15 +1,15 @@
 <div class="page" ng-class="Menu.isOpen()?'open':''">
 	<header class="bar-title">
-		<a ng-show="a.selection==='Schedule'" class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 25px;">
+		<a ng-show="a.selection==='Schedule'" class="button" ng-click="Menu.toggle()" style="height:23px;padding-right:26px;">
 			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
 			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
 		</a>
 
 
-	<a ng-if="a.selection==='ScheduleDetails'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='Schedule';" stop-event="click">
+	<a ng-if="a.selection==='ScheduleDetails'" class="button" style="height:23px;padding-right:26px;" ng-click="a.selection='Schedule';" stop-event="click">
 			<i class="icon-arrow-left icon-large"></i>
 	</a>
-	<a ng-if="a.selection==='ScheduleRatings'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='ScheduleDetails';" stop-event="click">
+	<a ng-if="a.selection==='ScheduleRatings'" class="button" style="height:23px;padding-right:26px;" ng-click="a.selection='ScheduleDetails';" stop-event="click">
 			<i class="icon-arrow-left icon-large"></i>
 	</a>
 

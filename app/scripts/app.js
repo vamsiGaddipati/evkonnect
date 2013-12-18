@@ -460,7 +460,7 @@ app.service('Menu', ['$location', function ($location) {
 	};
 
 	var isOpen = false, subPage = false, active,
-	items = [{code:'/profile', icon:'icon-edit', name:'Edit Profile'},{code:'/myevents', icon:'icon-map-marker', name:'TES Summit 2013'},{code:'/people', icon:'icon-group', name:'People'},{code:'/schedule', icon:'icon-calendar', name:'Schedule'},{code:'/eventinfo', icon:'icon-info-sign', name:'Event Info'},{code:'/sponsers', icon:'icon-anchor', name:'Sponsors'},{code:'/newsfeed', icon:'icon-rss', name:'Twitter Feed'}];
+	items = [{code:'/', icon:'icon-map-marker', name:'TES Summit 2013'},{code:'/profile', icon:'icon-edit', name:'Edit Profile'},{code:'/people', icon:'icon-group', name:'People'},{code:'/schedule', icon:'icon-calendar', name:'Schedule'},{code:'/eventinfo', icon:'icon-info-sign', name:'Event Info'},{code:'/sponsers', icon:'icon-anchor', name:'Sponsors'},{code:'/newsfeed', icon:'icon-rss', name:'Twitter Feed'}];
 
 	this.getItem = function(code){
 		var len = items.length;
@@ -482,11 +482,11 @@ app.factory('QCalls', ['$http','$q',function($http,$q) {
 		 	//alert(aurl);
 		var httpcall =  $http({ url: aurl, method: "GET"}).
 						success(function(data, status, headers, config) {
-							console.log(data);
+							debug(data);
 							callback(data,"Success");
 				    	}).
 				  		error(function(data, status, headers, config) {
-				  			console.log(data);
+				  			debug(data);
 				  			callback(data,"Error");
 				   		});
           return $q.all([httpcall]);
@@ -636,16 +636,4 @@ app.filter('timeAgo', ['timeAgo', 'nowTime', function(timeAgo, nowTime) {
 	};
 }]);
 
-app.directive('stopEvent', ['Demo',function (Demo) {
-	return {
-		restrict: 'A',
-		link: function (scope, element, attr) {
-			element.bind(attr.stopEvent, function (e) {
-				e.stopPropagation();
-				e.preventDefault();
-				Demo.pauseDemo();
-			});
-		}
-	};
-}]);
 

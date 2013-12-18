@@ -36,7 +36,7 @@ div.menu ul li a{color:#fff;font-weight:bold;}
 .lpanel{background:#333;display:block;position:absolute;left:0;top:0;right:0;bottom:0;z-index:0;list-style:none;width:auto;border:0px;overflow-y:auto;overflow-x:hidden;}
 div.lpanel ul li{display:block;border-bottom:1px inset #000;position:relative;height:40px;}
 div.lpanel ul li.header{color:#ddd;font-size:1.5em;line-height:42px;padding:0px;padding-left:10px;position:fixed;right:0;left:0;top:0;z-index:1;}
-div.lpanel ul li.active,div.lpanel ul li.active a{background-color:#ddd;color:#000;}
+div.lpanel ul li.active,div.lpanel ul li.active a{background-color:#41b7d8;color:#000;}
 div.lpanel ul li:first-child{border-top:1px inset #1c1c1c;}
 div.lpanel ul li a{color:#ddd;font-weight:bold;padding-left:50px;top:0px;left:0px;position:absolute;width:100%;height:100%;display:block;line-height:40px;}
 div.lpanel ul li a i{top:10px;left:10px;position:absolute;font-size:1.5em;}

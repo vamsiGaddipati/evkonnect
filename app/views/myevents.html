@@ -1,20 +1,21 @@
 <div class="page" ng-class="Menu.isOpen()?'open':''">
 	<header class="bar-title">
-		<a class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 12px;">
+		<a class="button" ng-click="Menu.toggle()" style="height:23px;padding-right:26px;">
 			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
 			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
 		</a>	
-		<h1 class="title">Event</h1>
+		<h1 class="title">Welcome {{displayName}}</h1>
 
 	</header>
 	<div class="content  slide">
-		<ul class="list" >
-
-			<li style="border-top:0px;color:#FFF;padding-top:10px;background-color: #41b7d8"><div style="margin-left:30%"> <h3>Welcome {{displayName}}</h3></div></li></ul>
+		<!--ul class="list" ><li style="border-top:0px;color:#FFF;padding-top:10px;background-color: #41b7d8"><div style="margin-left:30%"> <h3>Welcome {{displayName}}</h3></div></li></ul-->
 		
 		<ul class="list inset">
 				<li  style="border-bottom:30px solid #41b7d8;padding-top:5px;padding-right:5px;padding-bottom:10px">
-						<div> <img src="http://www.tiesummit.com/img/logo.png" height="50px" width="75px"> <strong>{{a.events.eventName}} </strong></div>
+   					 <div>
+   						 <strong>{{a.events.eventName}} </strong>
+   					 </div>
+					<div> <img src="http://www.tiesummit.com/img/logo.png" style="min-height:50px;"></div>
 					 <div style="padding-top:5px">
 						 <i class="icon-calendar"></i> {{a.events.startDate | date:'MMM-dd-yyyy'}}
 					 </div>

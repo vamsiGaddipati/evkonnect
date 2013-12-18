@@ -1,10 +1,10 @@
 <div id="sponserPage" class="page">
 	<header class="bar-title">
-		<a ng-if="a.selection==='Sponsers'" class="button" ng-click="Menu.toggle()" style="height:23px;padding-right: 25px;">
+		<a ng-if="a.selection==='Sponsers'" class="button" ng-click="Menu.toggle()" style="height:23px;padding-right:26px;">
 			<i ng-hide="Menu.isOpen()" class="icon-align-justify icon-large"></i>
 			<i ng-show="Menu.isOpen()" class="icon-remove icon-large"></i>
 		</a>	
-		<a ng-if="a.selection==='SponserDetails'" class="button" style="margin-left:0px;margin-top: 2px;" ng-click="a.selection='Sponsers';" stop-event="click">
+		<a ng-if="a.selection==='SponserDetails'" class="button" style="height:23px;padding-right:26px;" ng-click="a.selection='Sponsers';" stop-event="click">
 			<i class="icon-arrow-left icon-large"></i>
 		</a>
 		<!-- 
@@ -48,9 +48,11 @@
 
 
 				<div class="tab" ng-switch-when="SponserDetails">
-				
+					<img src="{{a.sponsers.current.logoUrl}}" style="max-height:80px;max-width:100%;padding: 10px 10px 10px 10px;">
+
 				<ul class="list inset" >
 				<li style="padding: 20px 10px 20px 10px;">
+					
 				<div style="">
 				<h3>{{a.sponsers.current.holderName}}</h3>
 				  {{a.sponsers.current.holderabout2}}

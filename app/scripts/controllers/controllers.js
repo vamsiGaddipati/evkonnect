@@ -1,10 +1,9 @@
 'use strict';
 var app = angular.module('SPAApp');
 
-app.controller('MainCtrl', ['$scope', '$location', 'alarmService', 'Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService, Logger,RaModel,Menu, Session, Cache, Demo) {
+app.controller('MainCtrl', ['$scope', '$location', 'alarmService', 'Logger','RaModel', 'Menu', 'Session', 'Cache', function ($scope, $location, alarmService, Logger,RaModel,Menu, Session, Cache) {
 	Menu.setActiveCode('/');
 	$scope.Menu = Menu;
-	$scope.Demo = Demo;
 	$scope.showIntro = Cache.get('showIntro');
 
 var tweets = Cache.get('tweets'), a = Cache.get('_a'), c, _limit = 20, $this = this;
@@ -711,7 +710,7 @@ app.controller('SponsersCtrl', ['$timeout','$rootScope','$scope','$http' ,'$loca
 }]);
 
 
-app.controller('EventInfoCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
+app.controller('EventInfoCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache) {
 	var currEvent = Cache.get('currEvent'), a = Cache.get('_a'), c, _limit = 20, $this = this;
 	$scope.userName = "";
 	this.initScope = function() {
@@ -770,7 +769,7 @@ app.controller('EventInfoCtrl', ['$scope', '$location', 'alarmService','Logger',
 
 
 
-app.controller('MyEventCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
+app.controller('MyEventCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache) {
 	var currEvent = Cache.get('currEvent'), a = Cache.get('_a'), c, _limit = 20, $this = this;
 	this.initScope = function() {
 		a.data = currEvent;
@@ -828,7 +827,7 @@ app.controller('MyEventCtrl', ['$scope', '$location', 'alarmService','Logger','R
 }]);
 
 
-app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
+app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', function ($scope, $location, alarmService,Logger,RaModel, Menu, Session, Cache) {
 	var currSchedule = Cache.get('currSchedule'), a = Cache.get('_a'), c, _limit = 40, $this = this;
 	$scope.day1 = "Y";
 	$scope.day2 = "N";
@@ -1069,7 +1068,7 @@ $scope.sendFeedback = function(subAny,comments,poor,good,great) {
 }]);
 
 
-app.controller('ProfileCtrl', ['$scope', '$location','$rootScope', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', 'Demo', function ($scope, $location, $rootScope,alarmService,Logger,RaModel, Menu, Session, Cache, Demo) {
+app.controller('ProfileCtrl', ['$scope', '$location','$rootScope', 'alarmService','Logger','RaModel', 'Menu', 'Session', 'Cache', function ($scope, $location, $rootScope,alarmService,Logger,RaModel, Menu, Session, Cache) {
 	
 	var currProfile = Cache.get('currProfile'), a = Cache.get('_a'), c, _limit = 20, $this = this;
 	
