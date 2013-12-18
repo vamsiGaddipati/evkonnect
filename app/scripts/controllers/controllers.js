@@ -52,7 +52,7 @@ var tweets = Cache.get('tweets'), a = Cache.get('_a'), c, _limit = 20, $this = t
 	this.tweetsQuery = function(){
 			a.tweets.loading = true;
 			//alert(_limit +"-"+a.tweets.offset);
-			RaModel.query({'dataSource':'TweetFeed'}, {'limit':_limit,'offset':a.tweets.offset, 'params':{'executeCountSql': 'N'}, 'select':['imageurl','tweet'],'data':{'skipPagination':'Y'}, 'sessionId':Session.get().sessionId}, function(result){
+			RaModel.query({'dataSource':'TwitterFeed'}, {'limit':50,'offset':a.tweets.offset, 'params':{'executeCountSql': 'N'}, 'select':['imageurl','tweet'],'data':{'skipPagination':'Y'}, 'sessionId':Session.get().sessionId}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
