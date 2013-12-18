@@ -28,7 +28,7 @@
 						<a stop-event="click"  ng-click="a.sponsers.current = r; a.selection='SponserDetails';" ng-swipe-right="a.sponsers.current = r; a.selection='SponserDetails';">
 						
 					 	<div>
-							<img src="{{r.logoUrl}}" style="position: absolute;top: 10%; height:80px;width:80px">
+							<img src="{{r.logoUrl}}" style="position: absolute;top: 10%; max-height:80px;max-width:80px">
 						</div>
 						<div style="padding-left:100px" ng-class="r.holderabout2 == null || r.holderabout2 == ''?'pushdown':''"> 
 							<strong><h3>{{r.holderName}}</h3></strong>

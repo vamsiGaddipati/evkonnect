@@ -108,9 +108,13 @@
 						</a></span>
 				</li>
 				  <li ng-show="a.peoples.current.publicProfileUrl"  style="padding: 10px 30px 10px 15px;" >
-				  <span style="font-size:15px;color:#0882f0"><i class="icon-linkedin"></i>    
-				  		<a stop-event="click" ng-click="openWindow(a.peoples.current.publicProfileUrl)">{{a.peoples.current.firstName}} on LinkedIn
-				  </a>
+				  <span ng-hide="a.peoples.current.linkedinUsername" style="font-size:15px;color:#0882f0">					  
+					  <i class="icon-google-plus"></i>    
+				  	  <a stop-event="click" ng-click="openWindow(a.peoples.current.publicProfileUrl)">{{a.peoples.current.firstName}} on Google+</a>
+				  </span>						  
+				  <span ng-show="a.peoples.current.linkedinUsername" style="font-size:15px;color:#0882f0">					  
+					  <i class="icon-linkedin"></i>    
+				  	  <a stop-event="click" ng-click="openWindow(a.peoples.current.publicProfileUrl)">{{a.peoples.current.firstName}} on LinkedIn</a>
 				  </span>
 				  </li>
 				  </ul>

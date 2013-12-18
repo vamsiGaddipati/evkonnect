@@ -16,11 +16,9 @@
 		<h1 class="title">
 
 			<i ng-show="a.loading || a.schedule.loading || a.sponserDetails.loading " class="icon-spinner icon-spin icon-large" style="display: none;"></i> 	{{a.pageTitle}}</h1>
-		<a ng-show="a.selection=='Schedule'" class="button" ng-click="signOff()">
-			<i class="icon-signout icon-large"></i> {{userName}}
-		</a>
+
 	</header>
-	<div class="content  slide" ng-click="Menu.isOpen() && Menu.toggle()" ng-switch on="a.selection">
+	<div class="content  slide" ng-switch on="a.selection">
 			
 
 		<div class="tab"  ng-switch-when="Schedule" infinite-scroll="getMoreSchedules()" infinite-scroll-distance="15">
@@ -41,8 +39,8 @@
 		<ul class="list" >
 
 			<li style="border-top:0px;color:#FFF;padding-top:0px;padding-bottom:40px;"><div style="margin-left:30%"> </div></li></ul>
-	<input type="search"   placeholder="Event Name"  ng-model="searchText" style="margin-left: 10px;margin-bottom: 0px;width:75%"> 
-	<a class="button-main button-linkedin" style="margin-top:4px" stop-event="click" ng-click="myScheduledFilter=!myScheduledFilter">
+	<input type="search"   placeholder="Event Name"  ng-model="searchText" style="margin-bottom: 0px;"> 
+	<a class="button-main button-block button-linkedin" style="margin-top:4px" stop-event="click" ng-click="myScheduledFilter=!myScheduledFilter">
 		<any ng-show="myScheduledFilter===false">My Schedule</any>
 			<any ng-show="myScheduledFilter===true">Full Schedule</any>
 	</a>
@@ -87,7 +85,6 @@
 				<li class="">
 					<div>
 					<strong>{{a.schedule.current.name}}</strong>
-
 					</div>
 					<div>
 						<a class="button" ng-click="a.selection='ScheduleRatings'" stop-event="click"><i class="icon-star-half-empty"></i> Rate</a>
@@ -133,7 +130,7 @@
     <li ng-class="day3=='Y'?'active':''">
       <a stop-event="click"  ng-click="day3='Y';day2='N';day1='N';day3Events()">20-Dec</a>
     </li> -->
-					<li style="margin: -10px -10px -10px -5px;"> 
+					<li style="margin: -10px -10px -10px -5px; padding-right: 20px;"> 
 						<ul class="segmented-controller">
 						  <li ng-class="poor=='Y'?'active':''" style="padding: 15px 30px 20px 10px;">
 						    <a stop-event="click" ng-click="poor='Y';good='N';great='N';" ><i class="icon-star-empty icon-2x"></i><font size="1px">Avg</font></a>
@@ -150,7 +147,7 @@
 
  				<div style="margin-top:10px;margin-left:15px;margin-bottom:5px;margin-bottom:5px">Comments</div>
  				<div>
- 				 <div align="center"> <textarea rows="10" style="width:95%" ng-model="comments"></textarea></div>
+ 				 <div align="center"> <textarea rows="6" style="width:95%" ng-model="comments"></textarea></div>
  				</div>
  					<ul class="list inset">
 						<li >
