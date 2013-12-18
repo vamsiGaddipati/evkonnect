@@ -225,7 +225,9 @@ app.controller('IndexCtrl', ['$scope', '$location', '$rootScope','RaModel', 'QCa
 			    				personDetails.publicProfileUrl = userprofile.publicProfileUrl;
 			    				personDetails.emailAddress = userprofile.emailAddress;
 			    				personDetails.linkedinUsername = userprofile.publicProfileUrl;
-			    				personDetails.twitterUsername = userprofile.twitterAccounts.values[0].providerAccountName;
+								if (userprofile.twitterAccounts && userprofile.twitterAccounts.values && userprofile.twitterAccounts.values.length > 0) {
+			    					personDetails.twitterUsername = userprofile.twitterAccounts.values[0].providerAccountName;
+								}
 			    				
 			    				console.log(personDetails.twitterUsername)
 			    					$scope.personDetails = personDetails;
