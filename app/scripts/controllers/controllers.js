@@ -59,7 +59,7 @@ var tweets = Cache.get('tweets'), a = Cache.get('_a'), c, _limit = 20, $this = t
 						//tweets
 						if (result.data.length > 0) {
 							a.tweets.data.push.apply(a.tweets.data, result.data);
-							console.log(result.data.length+"*******");
+							//console.log(result.data.length+"*******");
 							if (result.data.length < _limit) {
 								a.tweets.hasMore = false;
 							} else {
@@ -833,13 +833,13 @@ app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger'
 	$scope.day1 = "Y";
 	$scope.day2 = "N";
 	$scope.day3 = "N";
-
+		$scope.filters = { };
 	$scope.poor = "N";
 	$scope.good = "Y";
 	$scope.great = "N";
 	$scope.subAnany = "";
 	$scope.comments = "";
-
+	$scope.myScheduledFilter = false;
 	
 	$scope.isScheduled = false;
 	this.initScope = function() {
@@ -860,7 +860,10 @@ app.controller('MyScheduleCtrl', ['$scope', '$location', 'alarmService','Logger'
 		$this.scheduleQuery('18-12-2013');
 		$this.userScheduleQuery(Session.get().userId,'18-12-2013');
 	};
-	
+
+	/*$scope.showMySchedule() {
+
+	}*/
 	this.init = function(){
 		a = {'pageTitle':'Schedule'};
 	};
@@ -963,7 +966,7 @@ $scope.sendFeedback = function(subAny,comments,poor,good,great) {
 	  'userId':Session.get().userId
 	 	}, function(result){
 			//alert(result+"asdfasdfasd");
-			console.log(result);
+			//console.log(result);
 			var newrow = {"userId":result.userId,"eventScheduleId":result.eventScheduleId};
 			if(operation === "insert") {
 				a.userSchedule.data.push(newrow);
@@ -971,7 +974,11 @@ $scope.sendFeedback = function(subAny,comments,poor,good,great) {
 				$this.removeByValue(a.userSchedule.data,newrow);
 
 			}
-			Logger.showAlert("Added to your schedule!!!","Update");
+			/*if(operation === "insert") {
+				Logger.showAlert("Added to your schedule!!!","Update");
+		   } else {
+				Logger.showAlert("Delete from your schedule!!!","Update");
+		   } */
 		});
 
 	}
@@ -987,13 +994,26 @@ $scope.sendFeedback = function(subAny,comments,poor,good,great) {
 	}
 	//hardcoded values of limit and offset.
 	this.userScheduleQuery = function(userId,startDateString){
-			a.schedule.loading = true;	 
+			a.schedule.loading = true;	
 			RaModel.query({'dataSource':'UserSchedule'}, {'limit':40,'offset':0, 'params':{'executeCountSql': 'N'}, 'sessionId':Session.get().sessionId, 'data':{'userId':userId,'startDateString':startDateString},'select': ['userId','eventScheduleId']}, function(result){
 					if (result.$error) {
 						Logger.showAlert(result.errorMessage, result.errorTitle);
 					} else {
 						if (result.data.length > 0) {
 							a.userSchedule.data.push.apply(a.userSchedule.data, result.data);
+
+							for(var counter =0; counter < a.schedule.data.length;counter++) {
+								var item = a.schedule.data[counter];
+								//console.log(item);
+									for(var counter1 = 0; counter1 < a.userSchedule.data.length;counter1++) {
+										var _userItem = a.userSchedule.data[counter1];
+										if(_userItem.eventScheduleId == item.eventScheduleId) {
+											item.isScheduled = true;
+								//			console.log(item);
+										}
+
+									}
+							}
 							/*if (result.data.length < _limit) {
 								a.schedule.hasMore = false;
 							} else {

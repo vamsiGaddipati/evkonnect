@@ -41,17 +41,19 @@
 		<ul class="list" >
 
 			<li style="border-top:0px;color:#FFF;padding-top:0px;padding-bottom:40px;"><div style="margin-left:30%"> </div></li></ul>
-	<input type="search"   placeholder="Event Name"  ng-model="searchText" style="margin-left: 10px;margin-bottom: 0px;width:95%">
+	<input type="search"   placeholder="Event Name"  ng-model="searchText" style="margin-left: 10px;margin-bottom: 0px;width:75%"> 
+	<a class="button-main button-linkedin" style="margin-top:4px" stop-event="click" ng-click="myScheduledFilter=!myScheduledFilter">
+		<any ng-show="myScheduledFilter===false">My Schedule</any>
+			<any ng-show="myScheduledFilter===true">Full Schedule</any>
+	</a>
 					
 <any ng-repeat="r in a.schedule.data | filter:searchText">
-			
+			<div ng-hide="myScheduledFilter && !r.isScheduled">
 			<ul class="list inset" ng-click="a.schedule.current = r; a.selection='ScheduleDetails';"
 						 ng-swipe-right="a.schedule.current = r; a.selection='ScheduleDetails';">
 			<!-- <any ng-if="$index == 0"> -->
 				<li class="list-divider">
-					{{r.startTimeString}}  
-					<any ng-repeat="us in a.userSchedule.data ">
-					<spn ng-if="us.eventScheduleId == r.eventScheduleId;" align="center;">
+					{{r.startTimeString}}  					<any ng-if="r.isScheduled">
 						<font color="color:blue"><i class="icon-calendar"></i></font></span>
 					</any>	
 				</li>
@@ -73,6 +75,7 @@
 			</li>
 					
 		</ul>
+	</div>
 				</any>
 
 		<ul>
@@ -101,10 +104,10 @@
 						
 					</li></ul>
 					<ul class="list inset"><li>
-
-					<input type="hidden" ng-model="$parent.isScheduled" />
+					
+					<input type="hidden" ng-model="a.schedule.current.isScheduled" />
 						I want to attend
-					    <div class="toggle" ng-class='$parent.isScheduled?"active":""' ng-click="$parent.isScheduled=!$parent.isScheduled;scheduleMyEvent($parent.isScheduled,a.schedule.current.eventScheduleId)" ng-swipe-right="$parent.isScheduled=true;" ng-swipe-left="$parent.isScheduled=false;">
+					    <div class="toggle" ng-class='a.schedule.current.isScheduled?"active":""' ng-click="a.schedule.current.isScheduled=!a.schedule.current.isScheduled;scheduleMyEvent(a.schedule.current.isScheduled,a.schedule.current.eventScheduleId)" ng-swipe-right="a.schedule.current.isScheduled=true;" ng-swipe-left="a.schedule.current.isScheduled=false;">
 					      <div class="toggle-handle"></div>
 					    </div>
 					
@@ -114,7 +117,7 @@
 						<ul class="list inset">
 							<li>
 				
-						{{r.schedule.current.about}}
+						{{a.schedule.current.about}}
 					</li>
 				</ul>
 			</div>
